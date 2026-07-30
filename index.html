@@ -57,7 +57,7 @@ body{
   background:var(--paper);color:var(--ink);
   font-family:"Inter Tight",system-ui,sans-serif;
   font-size:clamp(15px,1.05vw,17px);line-height:1.5;font-weight:400;
-  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;overflow-x:clip;
 }
 h1,h2,h3,.display{font-family:"Familjen Grotesk",system-ui,sans-serif;font-weight:500;letter-spacing:-.03em;line-height:.98}
 a{color:inherit;text-decoration:none}
@@ -161,9 +161,12 @@ section{padding:clamp(72px,11vh,140px) var(--pad)}
 .case-head[aria-expanded="true"] .plus{border-color:var(--accent);color:var(--accent)}
 .case-head[aria-expanded="true"] .plus::after{transform:translate(-50%,-50%) rotate(0deg);opacity:0}
 
-.panel{overflow:hidden}
-.js .panel{max-height:0;transition:max-height .75s var(--ease)}
+.js .panel{max-height:0;overflow:hidden;transition:max-height .75s var(--ease)}
 .case-body{margin:0 0 clamp(34px,5vh,58px) var(--rail-offset)}
+/* pinning: the case holds still while the carousel steps through its three images */
+.pin-track{position:relative;padding-bottom:95vh}
+.pin-inner{position:sticky;top:88px}
+@media (max-height:840px){.pin-inner{top:68px}}
 
 /* ---------- media strip ---------- */
 .media{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);aspect-ratio:21/8}
@@ -255,6 +258,8 @@ footer{padding:0 var(--pad) 28px}
   .case-head{grid-template-columns:30px 1fr 34px;gap:12px}
   .case-tags{grid-column:2;align-items:flex-start;padding-top:14px;flex-direction:row;flex-wrap:wrap}
   .media{aspect-ratio:16/9}
+  .pin-track{padding-bottom:0}
+  .pin-inner{position:static}
   .pathway{grid-template-columns:1fr;padding-top:0;padding-left:26px;gap:30px}
   .rail{top:6px;bottom:6px;left:0;right:auto;width:1px;height:auto}
   .rail-fill{width:1px;height:100%;transform:scaleY(0);transform-origin:top}
@@ -270,6 +275,8 @@ footer{padding:0 var(--pad) 28px}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
+  .pin-track{padding-bottom:0}
+  .pin-inner{position:static}
   *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
   .js [data-reveal]{opacity:1;transform:none}
   .js .word span{transform:none}
@@ -328,6 +335,7 @@ footer{padding:0 var(--pad) 28px}
       <span class="plus"></span>
     </button></h2>
     <div class="panel" id="c1" role="region" aria-labelledby="c1-btn">
+      <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
         <div class="media">
           <div class="strip">
@@ -370,6 +378,7 @@ footer{padding:0 var(--pad) 28px}
           </div>
         </div>
       </div>
+      </div></div>
     </div>
   </article>
 
@@ -385,6 +394,7 @@ footer{padding:0 var(--pad) 28px}
       <span class="plus"></span>
     </button></h2>
     <div class="panel" id="c2" role="region" aria-labelledby="c2-btn">
+      <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
         <div class="media">
           <div class="strip">
@@ -424,6 +434,7 @@ footer{padding:0 var(--pad) 28px}
           </div>
         </div>
       </div>
+      </div></div>
     </div>
   </article>
 
@@ -439,6 +450,7 @@ footer{padding:0 var(--pad) 28px}
       <span class="plus"></span>
     </button></h2>
     <div class="panel" id="c3" role="region" aria-labelledby="c3-btn">
+      <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
         <div class="media">
           <div class="strip">
@@ -480,6 +492,7 @@ footer{padding:0 var(--pad) 28px}
           </div>
         </div>
       </div>
+      </div></div>
     </div>
   </article>
 
@@ -495,6 +508,7 @@ footer{padding:0 var(--pad) 28px}
       <span class="plus"></span>
     </button></h2>
     <div class="panel" id="c4" role="region" aria-labelledby="c4-btn">
+      <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
         <div class="media">
           <div class="strip">
@@ -534,6 +548,7 @@ footer{padding:0 var(--pad) 28px}
           </div>
         </div>
       </div>
+      </div></div>
     </div>
   </article>
 
@@ -549,6 +564,7 @@ footer{padding:0 var(--pad) 28px}
       <span class="plus"></span>
     </button></h2>
     <div class="panel" id="c5" role="region" aria-labelledby="c5-btn">
+      <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
         <div class="media">
           <div class="strip">
@@ -588,6 +604,7 @@ footer{padding:0 var(--pad) 28px}
           </div>
         </div>
       </div>
+      </div></div>
     </div>
   </article>
 
@@ -603,6 +620,7 @@ footer{padding:0 var(--pad) 28px}
       <span class="plus"></span>
     </button></h2>
     <div class="panel" id="c6" role="region" aria-labelledby="c6-btn">
+      <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
         <div class="media">
           <div class="strip">
@@ -643,6 +661,7 @@ footer{padding:0 var(--pad) 28px}
           </div>
         </div>
       </div>
+      </div></div>
     </div>
   </article>
 </section>
@@ -763,18 +782,20 @@ var Cases = (function(){
   function setOpen(h, open, animate){
     var p = panelOf(h);
     h.setAttribute('aria-expanded', open ? 'true' : 'false');
+    function release(){ p.style.maxHeight = 'none'; p.style.overflow = 'visible'; }
     if (open){
       p.style.maxHeight = p.scrollHeight + 'px';
-      if (!animate || reduce){ p.style.maxHeight = 'none'; }
-      else {
-        clearTimeout(p._t);
-        p._t = setTimeout(function(){ if (h.getAttribute('aria-expanded') === 'true') p.style.maxHeight = 'none'; }, 800);
-      }
-    } else if (!animate || reduce){
-      p.style.maxHeight = '0px';
+      clearTimeout(p._t);
+      if (!animate || reduce) release();
+      else p._t = setTimeout(function(){ if (h.getAttribute('aria-expanded') === 'true') release(); }, 800);
     } else {
-      p.style.maxHeight = p.scrollHeight + 'px';
-      requestAnimationFrame(function(){ requestAnimationFrame(function(){ p.style.maxHeight = '0px'; }); });
+      clearTimeout(p._t);
+      p.style.overflow = 'hidden';
+      if (!animate || reduce){ p.style.maxHeight = '0px'; }
+      else {
+        p.style.maxHeight = p.scrollHeight + 'px';
+        requestAnimationFrame(function(){ requestAnimationFrame(function(){ p.style.maxHeight = '0px'; }); });
+      }
     }
     nudge();
   }
@@ -804,7 +825,7 @@ var Cases = (function(){
   });
   syncAllBtn();
   window.addEventListener('resize', function(){
-    heads.forEach(function(h){ if (h.getAttribute('aria-expanded') === 'true') panelOf(h).style.maxHeight = 'none'; });
+    heads.forEach(function(h){ if (h.getAttribute('aria-expanded') === 'true'){ panelOf(h).style.maxHeight = 'none'; panelOf(h).style.overflow = 'visible'; } });
   });
   return { subscribe:function(fn){ onChange.push(fn); } };
 })();
@@ -829,50 +850,89 @@ var Cases = (function(){
   items.forEach(function(el){ io.observe(el); });
 })();
 
-/* pathway rail + image carousel, both driven by scroll position */
+/* pathway rail + image carousel, driven by the pinned scroll distance */
 (function(){
   var bodies = Array.prototype.slice.call(document.querySelectorAll('.case-body'));
-  var vertical = window.matchMedia('(max-width:900px)');
+  var narrow = window.matchMedia('(max-width:900px)');
+  var noPin = window.matchMedia('(max-width:900px), (prefers-reduced-motion: reduce)');
   var queued = false;
 
   function smooth(t){ return t * t * (3 - 2 * t); }
   function slidePos(p){
-    if (p < 0.16) return 0;
-    if (p < 0.40) return smooth((p - 0.16) / 0.24);
-    if (p < 0.56) return 1;
-    if (p < 0.80) return 1 + smooth((p - 0.56) / 0.24);
+    if (p < 0.18) return 0;
+    if (p < 0.40) return smooth((p - 0.18) / 0.22);
+    if (p < 0.58) return 1;
+    if (p < 0.80) return 1 + smooth((p - 0.58) / 0.22);
     return 2;
   }
+  /* map raw progress onto the rail so each node is reached exactly as its image lands */
+  function railAt(p, xs){
+    var ps = [0, 0.40, 0.80, 1], vs = [xs[0], xs[1], xs[2], 1];
+    for (var i = 1; i < ps.length; i++){
+      if (p <= ps[i]) return vs[i-1] + (vs[i] - vs[i-1]) * ((p - ps[i-1]) / (ps[i] - ps[i-1]));
+    }
+    return 1;
+  }
+  function metrics(b){
+    var m = b._m;
+    if (!m || m.w !== b.offsetWidth){
+      var path = b.querySelector('.pathway'), w = path.offsetWidth || 1;
+      var stages = Array.prototype.slice.call(b.querySelectorAll('.stage'));
+      m = {
+        w: b.offsetWidth,
+        xs: stages.map(function(st){ return (st.offsetLeft + 4.5) / w; }),
+        stages: stages,
+        fill: b.querySelector('.rail-fill'),
+        strip: b.querySelector('.strip'),
+        dots: b.querySelectorAll('.dots i'),
+        inner: b.parentNode,
+        track: b.parentNode.parentNode
+      };
+      m.stickyTop = parseFloat(getComputedStyle(m.inner).top) || 0;
+      b._m = m;
+    }
+    return m;
+  }
+  function invalidate(){ bodies.forEach(function(b){ b._m = null; }); }
 
   function draw(){
     queued = false;
-    var vh = window.innerHeight, vert = vertical.matches;
+    var vh = window.innerHeight, vert = narrow.matches, pin = !noPin.matches;
     bodies.forEach(function(b){
       if (!b.offsetParent || b.offsetHeight < 20) return;
-      var r = b.getBoundingClientRect();
-      if (r.bottom < -200 || r.top > vh + 200) return;
-      var prog = (vh * 0.82 - r.top) / (r.height + vh * 0.3);
+      var m = metrics(b), prog;
+
+      if (pin){
+        var tr = m.track.getBoundingClientRect();
+        if (tr.bottom < -200 || tr.top > vh + 200) return;
+        var travel = tr.height - m.inner.offsetHeight;
+        prog = travel > 8 ? (m.stickyTop - tr.top) / travel : 0;
+      } else {
+        var r = b.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > vh + 200) return;
+        prog = (vh * 0.82 - r.top) / (r.height + vh * 0.3);
+      }
       prog = Math.max(0, Math.min(1, prog));
 
-      var fill = b.querySelector('.rail-fill');
-      if (fill) fill.style.transform = (vert ? 'scaleY(' : 'scaleX(') + prog + ')';
+      if (m.fill) m.fill.style.transform = vert
+        ? 'scaleY(' + prog + ')'
+        : 'scaleX(' + railAt(prog, m.xs) + ')';
 
-      var gates = [0.02, 0.38, 0.74];
-      b.querySelectorAll('.stage').forEach(function(s, i){ s.classList.toggle('lit', prog >= gates[i]); });
+      var gates = [0, 0.34, 0.74];
+      m.stages.forEach(function(st, i){ st.classList.toggle('lit', prog >= gates[i]); });
 
-      var strip = b.querySelector('.strip');
-      if (strip){
+      if (m.strip){
         var pos = slidePos(prog);
-        strip.style.transform = 'translateX(' + (-pos * 33.3333) + '%)';
+        m.strip.style.transform = 'translateX(' + (-pos * 33.3333) + '%)';
         var active = Math.round(pos);
-        b.querySelectorAll('.dots i').forEach(function(d, i){ d.classList.toggle('on', i === active); });
+        m.dots.forEach(function(d, i){ d.classList.toggle('on', i === active); });
       }
     });
   }
   function onScroll(){ if (!queued){ queued = true; requestAnimationFrame(draw); } }
   window.addEventListener('scroll', onScroll, {passive:true});
-  window.addEventListener('resize', onScroll);
-  Cases.subscribe(draw);
+  window.addEventListener('resize', function(){ invalidate(); onScroll(); });
+  Cases.subscribe(function(){ invalidate(); draw(); });
   draw();
 })();
 
