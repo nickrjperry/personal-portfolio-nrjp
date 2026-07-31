@@ -164,7 +164,8 @@ section{padding:clamp(72px,11vh,140px) var(--pad)}
 .js .panel{max-height:0;overflow:hidden;transition:max-height .75s var(--ease)}
 .case-body{margin:0 0 0 var(--rail-offset)}
 /* pinning: the case holds still while the carousel steps through its three images */
-.pin-track{position:relative;padding-bottom:88vh}
+.pin-track{position:relative;padding-bottom:clamp(34px,5vh,58px)}
+.js .pin-track{padding-bottom:88vh}
 .pin-inner{will-change:transform}
 .pin-label{display:flex;gap:12px;align-items:baseline;padding-bottom:10px;margin-bottom:16px;
   border-bottom:1px solid var(--line);opacity:0;transition:opacity .45s var(--ease)}
@@ -193,6 +194,13 @@ section{padding:clamp(72px,11vh,140px) var(--pad)}
 .node{position:absolute;top:-39px;left:0;width:9px;height:9px;border-radius:50%;background:var(--paper);border:1px solid var(--line);
   transition:background .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease)}
 .stage.lit .node{background:var(--accent);border-color:var(--accent);transform:scale(1.15)}
+.rail .rn{display:none;position:absolute;top:-4px;width:9px;height:9px;border-radius:50%;
+  background:var(--paper);border:1px solid var(--line);
+  transition:background .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease)}
+.rail i.rn:nth-of-type(1){left:0}
+.rail i.rn:nth-of-type(2){left:calc(50% - 4.5px)}
+.rail i.rn:nth-of-type(3){left:calc(100% - 9px)}
+.rail .rn.lit{background:var(--accent);border-color:var(--accent);transform:scale(1.15)}
 .stage h3{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-60);margin-bottom:14px;transition:color .35s linear}
 .stage.lit h3{color:var(--ink)}
 .stage li{padding-left:15px;position:relative;margin-bottom:9px;max-width:40ch}
@@ -261,7 +269,7 @@ footer{padding:0 var(--pad) 28px}
   .case-head{grid-template-columns:30px 1fr 34px;gap:12px}
   .case-tags{grid-column:2;align-items:flex-start;padding-top:14px;flex-direction:row;flex-wrap:wrap}
   .media{aspect-ratio:16/9;max-height:none}
-  .pin-track{padding-bottom:clamp(34px,5vh,58px)}
+  .js .pin-track{padding-bottom:76vh}
   .pin-label{display:none}
   .pathway{grid-template-columns:1fr;padding-top:0;padding-left:26px;gap:30px}
   .rail{top:6px;bottom:6px;left:0;right:auto;width:1px;height:auto}
@@ -272,13 +280,29 @@ footer{padding:0 var(--pad) 28px}
   .portrait{aspect-ratio:3/2}
   .portrait img{object-position:60% 42%}
   .about-body{grid-template-columns:1fr}
+  /* while pinned on a small screen: one stage at a time, timeline runs left to right */
+  .stacked .pin-label{display:flex}
+  .stacked .media{max-height:32vh}
+  .stacked .pathway{padding-top:34px;padding-left:0;gap:0}
+  .stacked .rail{top:0;bottom:auto;left:0;right:0;width:auto;height:1px}
+  .stacked .rail-fill{width:100%;height:1px;transform:scaleX(0);transform-origin:left}
+  .stacked .stage{grid-column:1;grid-row:1;opacity:0;transform:translateY(14px);pointer-events:none;
+    transition:opacity .5s var(--ease),transform .5s var(--ease)}
+  .stacked .stage.active{opacity:1;transform:none;pointer-events:auto}
+  .stacked .stage .node{display:none}
+  .stacked .rail .rn{display:block}
 }
 @media (max-width:520px){
   .stats-grid{grid-template-columns:1fr}
+  /* trim the pinned card so it still fits the smallest phones */
+  .stacked .media{max-height:26vh}
+  .stacked .out-panel{padding:16px}
+  .stacked .stage li{margin-bottom:7px}
+  .stacked .cite{margin-top:12px}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .pin-track{padding-bottom:clamp(34px,5vh,58px)}
+  .js .pin-track{padding-bottom:clamp(34px,5vh,58px)}
   .pin-label{display:none}
   *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
   .js [data-reveal]{opacity:1;transform:none}
@@ -350,7 +374,7 @@ footer{padding:0 var(--pad) 28px}
           <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
         </div>
         <div class="pathway">
-          <span class="rail"><span class="rail-fill"></span></span>
+          <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
           <div class="stage">
             <span class="node"></span><h3>Problem</h3>
             <ul>
@@ -410,7 +434,7 @@ footer{padding:0 var(--pad) 28px}
           <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
         </div>
         <div class="pathway">
-          <span class="rail"><span class="rail-fill"></span></span>
+          <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
           <div class="stage">
             <span class="node"></span><h3>Problem</h3>
             <ul>
@@ -467,7 +491,7 @@ footer{padding:0 var(--pad) 28px}
           <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
         </div>
         <div class="pathway">
-          <span class="rail"><span class="rail-fill"></span></span>
+          <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
           <div class="stage">
             <span class="node"></span><h3>Problem</h3>
             <ul>
@@ -526,7 +550,7 @@ footer{padding:0 var(--pad) 28px}
           <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
         </div>
         <div class="pathway">
-          <span class="rail"><span class="rail-fill"></span></span>
+          <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
           <div class="stage">
             <span class="node"></span><h3>Problem</h3>
             <ul>
@@ -583,7 +607,7 @@ footer{padding:0 var(--pad) 28px}
           <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
         </div>
         <div class="pathway">
-          <span class="rail"><span class="rail-fill"></span></span>
+          <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
           <div class="stage">
             <span class="node"></span><h3>Problem</h3>
             <ul>
@@ -640,7 +664,7 @@ footer{padding:0 var(--pad) 28px}
           <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
         </div>
         <div class="pathway">
-          <span class="rail"><span class="rail-fill"></span></span>
+          <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
           <div class="stage">
             <span class="node"></span><h3>Problem</h3>
             <ul>
@@ -690,14 +714,14 @@ footer{padding:0 var(--pad) 28px}
 
   <div class="about-body">
     <div data-reveal>
-      <p>I build what’s next.<p>
+      <p>I build what’s next.</p>
       <p>I work where emerging regulation, hardware, and habit collide. I’ve built clinical platforms used across 40+ markets, reimagined hearing experiences around devices people already own, and created subscription products from the ground up.</p>
       <p>The part I care about most is turning uncertainty into direction. Aligning executives, engineers, customers, and clinicians around the thing worth building. Making the hard choices. Knowing what to leave behind.</p>
       <p>I lead product teams across product, design, and engineering, but I still prototype every day, ask the uncomfortable questions, and stay close to the details.</p>
     </div>
     <div data-reveal>
-      <p>The work I love is the invisible work: finding the signal in the noise, removing what doesn’t matter, and creating products that get better every time they ship.<p>
-      <p>Today, that means building AI and agentic experiences that don’t just demonstrate what’s possible — but earn trust in the real world, with real users, clinicians, and the standards that matter.</p>
+      <p>The work I love is the invisible work: finding the signal in the noise, removing what doesn’t matter, and creating products that get better every time they ship.</p>
+      <p>Today, that means building AI and agentic experiences that don’t just demonstrate what’s possible, but earn trust in the real world, with real users, clinicians, and the standards that matter.</p>
     </div>
   </div>
 </section>
@@ -717,7 +741,7 @@ footer{padding:0 var(--pad) 28px}
       <div class="cta-links" data-reveal>
         <!-- TODO-CONTACT: replace both links -->
         <a href="mailto:nickrjperry@gmail.com">nickrjperry@gmail.com <i>&#8599;</i></a>
-        <a href="https://www.linkedin.com/in/nicholasrjperry//" target="_blank" rel="noopener">LinkedIn <i>&#8599;</i></a>
+        <a href="https://www.linkedin.com/in/nicholasrjperry/" target="_blank" rel="noopener">LinkedIn <i>&#8599;</i></a>
       </div>
     </div>
   </div>
@@ -727,7 +751,7 @@ footer{padding:0 var(--pad) 28px}
   <div class="wordmark" data-reveal>NICK</div>
   <div class="foot-row mono">
     <span>Toronto, Ontario</span>
-    <span>V1.1</span>
+    <span>V1.2</span>
     <span>&copy; 2026</span>
   </div>
 </footer>
@@ -866,15 +890,16 @@ var Cases = (function(){
 
 /* case pinning: the card is translated down as you scroll, so it holds still on
    screen while the carousel turns and the rail advances, then it releases.
-   Done with transform rather than position:sticky, which any clipped ancestor can break. */
+   On small screens the card stacks to one stage at a time so it still fits. */
 (function(){
   var bodies = Array.prototype.slice.call(document.querySelectorAll('.case-body'));
   var narrow = mq('(max-width:900px)');
-  var noPin = mq('(max-width:900px), (prefers-reduced-motion: reduce)');
+  var still = mq('(prefers-reduced-motion: reduce)');
   var queued = false;
 
   /* image 2 lands at 42% of the pinned scroll, image 3 at 90% */
   var K = [0, 0.42, 0.90, 1];
+  var FLAT = [0, 0.5, 1];
   function smooth(t){ return t * t * (3 - 2 * t); }
   function slidePos(p){
     if (p < 0.10) return 0;
@@ -892,41 +917,55 @@ var Cases = (function(){
     return 1;
   }
 
-  function metrics(b){
+  function metrics(b, vh, mobile, wantPin){
     var m = b._m;
-    if (!m || m.w !== b.offsetWidth || m.vh !== window.innerHeight){
-      var inner = b.parentNode;
-      inner.style.transform = '';
-      var path = b.querySelector('.pathway'), w = (path && path.offsetWidth) || 1;
-      var stages = Array.prototype.slice.call(b.querySelectorAll('.stage'));
-      m = {
-        w: b.offsetWidth, vh: window.innerHeight, inner: inner, track: inner.parentNode,
-        xs: stages.map(function(st){ return (st.offsetLeft + 4.5) / w; }),
-        stages: stages,
-        fill: b.querySelector('.rail-fill'),
-        strip: b.querySelector('.strip'),
-        dots: b.querySelectorAll('.dots i')
-      };
-      m.contentH = inner.offsetHeight;
-      /* hold the card in the middle of the screen, not jammed under the nav */
-      m.top = Math.max(24, Math.round((m.vh - m.contentH) / 2));
-      b._m = m;
+    if (m && m.w === b.offsetWidth && m.mobile === mobile && m.want === wantPin
+        && Math.abs(m.vh - vh) < 130) return m;
+
+    var inner = b.parentNode, track = inner.parentNode;
+    inner.style.transform = '';
+    track.style.paddingBottom = '';
+    b.classList.toggle('stacked', mobile && wantPin);
+
+    var path = b.querySelector('.pathway'), w = (path && path.offsetWidth) || 1;
+    var stages = Array.prototype.slice.call(b.querySelectorAll('.stage'));
+    var contentH = inner.offsetHeight;
+    /* only pin if the whole card fits on screen, otherwise let it scroll normally */
+    var pin = wantPin && contentH <= vh - 24;
+    if (!pin){
+      b.classList.remove('stacked');
+      contentH = inner.offsetHeight;
+      track.style.paddingBottom = 'clamp(34px,5vh,58px)';
     }
+
+    m = {
+      w: b.offsetWidth, vh: vh, mobile: mobile, want: wantPin,
+      pin: pin, stacked: pin && mobile, contentH: contentH,
+      inner: inner, track: track, stages: stages,
+      xs: stages.map(function(st){ return (st.offsetLeft + 4.5) / w; }),
+      fill: b.querySelector('.rail-fill'),
+      strip: b.querySelector('.strip'),
+      dots: Array.prototype.slice.call(b.querySelectorAll('.dots i')),
+      rn: Array.prototype.slice.call(b.querySelectorAll('.rn'))
+    };
+    /* hold the card in the middle of the screen */
+    m.top = Math.max(16, Math.round((vh - contentH) / 2));
+    b._m = m;
     return m;
   }
   function invalidate(){ bodies.forEach(function(b){ b._m = null; }); }
 
   function draw(){
     queued = false;
-    var vh = window.innerHeight, vert = narrow.matches, pin = !noPin.matches;
+    var vh = window.innerHeight, mobile = narrow.matches, wantPin = !still.matches;
     bodies.forEach(function(b){
       if (!b.offsetParent || b.offsetHeight < 20) return;
-      var m = metrics(b);
+      var m = metrics(b, vh, mobile, wantPin);
       var tr = m.track.getBoundingClientRect();
       if (tr.bottom < -120 || tr.top > vh + 120) return;
       var prog;
 
-      if (pin){
+      if (m.pin){
         var travel = Math.max(0, tr.height - m.contentH);
         var y = Math.min(Math.max(m.top - tr.top, 0), travel);
         m.inner.style.transform = y ? 'translate3d(0,' + y + 'px,0)' : '';
@@ -934,27 +973,38 @@ var Cases = (function(){
         m.inner.classList.toggle('pinning', prog > 0.005 && prog < 0.995);
       } else {
         m.inner.style.transform = '';
+        m.inner.classList.remove('pinning');
         prog = (vh * 0.82 - tr.top) / (tr.height + vh * 0.3);
       }
       prog = Math.max(0, Math.min(1, prog));
+      var pos = slidePos(prog), active = Math.round(pos);
 
-      if (m.fill) m.fill.style.transform = vert
+      if (m.fill) m.fill.style.transform = (mobile && !m.stacked)
         ? 'scaleY(' + prog + ')'
-        : 'scaleX(' + railAt(prog, m.xs) + ')';
+        : 'scaleX(' + railAt(prog, m.stacked ? FLAT : m.xs) + ')';
 
-      m.stages.forEach(function(st, i){ st.classList.toggle('lit', prog >= K[i]); });
+      m.stages.forEach(function(st, i){
+        st.classList.toggle('lit', prog >= K[i]);
+        st.classList.toggle('active', m.stacked && i === active);
+      });
+      m.rn.forEach(function(n, i){ n.classList.toggle('lit', prog >= K[i]); });
 
       if (m.strip){
-        var pos = slidePos(prog);
         m.strip.style.transform = 'translateX(' + (-pos * 33.3333) + '%)';
-        var active = Math.round(pos);
         m.dots.forEach(function(d, i){ d.classList.toggle('on', i === active); });
       }
     });
   }
   function onScroll(){ if (!queued){ queued = true; requestAnimationFrame(draw); } }
   window.addEventListener('scroll', onScroll, {passive:true});
-  window.addEventListener('resize', function(){ invalidate(); onScroll(); });
+
+  /* ignore the small height changes a mobile address bar causes, or the card jumps */
+  var lastW = window.innerWidth, lastH = window.innerHeight;
+  window.addEventListener('resize', function(){
+    var w = window.innerWidth, h = window.innerHeight;
+    if (w !== lastW || Math.abs(h - lastH) > 130){ lastW = w; lastH = h; invalidate(); }
+    onScroll();
+  });
   window.addEventListener('load', function(){ invalidate(); draw(); });
   Cases.subscribe(function(){ invalidate(); draw(); });
   window.__pinDraw = draw;
