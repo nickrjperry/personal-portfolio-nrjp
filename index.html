@@ -162,14 +162,17 @@ section{padding:clamp(72px,11vh,140px) var(--pad)}
 .case-head[aria-expanded="true"] .plus::after{transform:translate(-50%,-50%) rotate(0deg);opacity:0}
 
 .js .panel{max-height:0;overflow:hidden;transition:max-height .75s var(--ease)}
-.case-body{margin:0 0 clamp(34px,5vh,58px) var(--rail-offset)}
+.case-body{margin:0 0 0 var(--rail-offset)}
 /* pinning: the case holds still while the carousel steps through its three images */
-.pin-track{position:relative;padding-bottom:95vh}
-.pin-inner{position:sticky;top:88px}
-@media (max-height:840px){.pin-inner{top:68px}}
+.pin-track{position:relative;padding-bottom:88vh}
+.pin-inner{will-change:transform}
+.pin-label{display:flex;gap:12px;align-items:baseline;padding-bottom:10px;margin-bottom:16px;
+  border-bottom:1px solid var(--line);opacity:0;transition:opacity .45s var(--ease)}
+.pin-label b{color:var(--accent);font-weight:400}
+.pin-inner.pinning .pin-label{opacity:1}
 
 /* ---------- media strip ---------- */
-.media{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);aspect-ratio:21/8}
+.media{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);aspect-ratio:21/8;max-height:40vh}
 .strip{display:flex;width:300%;height:100%;will-change:transform}
 .js .strip{transition:transform .12s linear}
 .slide{position:relative;flex:0 0 33.3333%;height:100%;overflow:hidden;
@@ -257,9 +260,9 @@ footer{padding:0 var(--pad) 28px}
   .menu-btn{display:block}
   .case-head{grid-template-columns:30px 1fr 34px;gap:12px}
   .case-tags{grid-column:2;align-items:flex-start;padding-top:14px;flex-direction:row;flex-wrap:wrap}
-  .media{aspect-ratio:16/9}
-  .pin-track{padding-bottom:0}
-  .pin-inner{position:static}
+  .media{aspect-ratio:16/9;max-height:none}
+  .pin-track{padding-bottom:clamp(34px,5vh,58px)}
+  .pin-label{display:none}
   .pathway{grid-template-columns:1fr;padding-top:0;padding-left:26px;gap:30px}
   .rail{top:6px;bottom:6px;left:0;right:auto;width:1px;height:auto}
   .rail-fill{width:1px;height:100%;transform:scaleY(0);transform-origin:top}
@@ -275,8 +278,8 @@ footer{padding:0 var(--pad) 28px}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .pin-track{padding-bottom:0}
-  .pin-inner{position:static}
+  .pin-track{padding-bottom:clamp(34px,5vh,58px)}
+  .pin-label{display:none}
   *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
   .js [data-reveal]{opacity:1;transform:none}
   .js .word span{transform:none}
@@ -304,9 +307,9 @@ footer{padding:0 var(--pad) 28px}
 
 <header class="hero" id="top">
   <span class="mono">Product leadership · Founder · Digital health · Consumer subscriptions · North America</span>
-  <h1 id="statement">I build digital health and consumer products that change behaviour, and I keep the receipts.</h1>
+  <h1 id="statement">I build what's next.</h1>
   <div class="hero-meta">
-    <p><b>Nick</b>, Director of Product Management at Dawn Health. Agentic workflows, AI inside the clinical consult, and the integrations that carry it.</p>
+    <p><b>Nick</b>, Director of Product Management at Dawn Health. Agentic workflows, loveable products AI for better care, and the integrations that carry them.</p>
     <p>Ten years in the Nordics, now building from Toronto.</p>
   </div>
 </header>
@@ -328,7 +331,7 @@ footer{padding:0 var(--pad) 28px}
     <h2 class="case-h"><button class="case-head" aria-expanded="false" aria-controls="c1" id="c1-btn" data-reveal>
       <span class="case-idx">01</span>
       <span class="case-title">
-        <span class="case-name">Microsoft Dragon Copilot</span>
+        <span class="case-name">Classified (Public Dec 2026)</span>
         <span class="case-sub">Reshaping the consult by putting live patient data in front of clinicians, in real time, inside the systems they already use.</span>
       </span>
       <span class="case-tags"><span class="chip">Partner integration</span><span class="chip">Agentic flows</span><span class="chip">EHR and AI</span></span>
@@ -337,6 +340,7 @@ footer{padding:0 var(--pad) 28px}
     <div class="panel" id="c1" role="region" aria-labelledby="c1-btn">
       <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
+        <div class="pin-label mono"><b>01</b> Classified Title</div>
         <div class="media">
           <div class="strip">
             <figure class="slide"><img src="images/01-problem.jpg" alt="Problem" loading="lazy"><figcaption class="mono">Problem</figcaption></figure>
@@ -358,7 +362,7 @@ footer{padding:0 var(--pad) 28px}
           <div class="stage">
             <span class="node"></span><h3>Solution</h3>
             <ul>
-              <li>Dawn apps collect patient-reported and biometric data, then deliver it into the clinician workflow through Microsoft Dragon Copilot.</li>
+              <li>Dawn apps collect patient-reported and biometric data, then deliver it into the clinician workflow through CLASSIFIED.</li>
               <li>Adaptive cards surface adherence, new symptoms and trend direction the moment the chart opens. No second login, no new interface to learn.</li>
               <li>Four flows behind it: Recap, Record, Signal and Sync, each tied to a real moment in the visit.</li>
             </ul>
@@ -373,7 +377,7 @@ footer{padding:0 var(--pad) 28px}
               <li>3.1x more patient-reported data reaching the clinician before the visit.</li>
               <li>61% of flagged adherence drops actioned in the same appointment.</li>
               </ul>
-              <!-- DUMMY METRICS above. Replace with real pilot numbers before sending this to anyone. -->
+              <!-- Temporary metrics. Replace with real pilot numbers before sending this to anyone. -->
             </div>
           </div>
         </div>
@@ -396,6 +400,7 @@ footer{padding:0 var(--pad) 28px}
     <div class="panel" id="c2" role="region" aria-labelledby="c2-btn">
       <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
+        <div class="pin-label mono"><b>02</b> Oryn</div>
         <div class="media">
           <div class="strip">
             <figure class="slide"><img src="images/02-problem.jpg" alt="Problem" loading="lazy"><figcaption class="mono">Problem</figcaption></figure>
@@ -452,6 +457,7 @@ footer{padding:0 var(--pad) 28px}
     <div class="panel" id="c3" role="region" aria-labelledby="c3-btn">
       <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
+        <div class="pin-label mono"><b>03</b> Growzen</div>
         <div class="media">
           <div class="strip">
             <figure class="slide"><img src="images/03-problem.jpg" alt="Problem" loading="lazy"><figcaption class="mono">Problem</figcaption></figure>
@@ -510,6 +516,7 @@ footer{padding:0 var(--pad) 28px}
     <div class="panel" id="c4" role="region" aria-labelledby="c4-btn">
       <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
+        <div class="pin-label mono"><b>04</b> Drool</div>
         <div class="media">
           <div class="strip">
             <figure class="slide"><img src="images/04-problem.jpg" alt="Problem" loading="lazy"><figcaption class="mono">Problem</figcaption></figure>
@@ -566,6 +573,7 @@ footer{padding:0 var(--pad) 28px}
     <div class="panel" id="c5" role="region" aria-labelledby="c5-btn">
       <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
+        <div class="pin-label mono"><b>05</b> Opal</div>
         <div class="media">
           <div class="strip">
             <figure class="slide"><img src="images/05-problem.jpg" alt="Problem" loading="lazy"><figcaption class="mono">Problem</figcaption></figure>
@@ -622,6 +630,7 @@ footer{padding:0 var(--pad) 28px}
     <div class="panel" id="c6" role="region" aria-labelledby="c6-btn">
       <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
+        <div class="pin-label mono"><b>06</b> Classified</div>
         <div class="media">
           <div class="strip">
             <figure class="slide is-empty"><figcaption class="mono">Restricted</figcaption></figure>
@@ -675,18 +684,20 @@ footer{padding:0 var(--pad) 28px}
   <div class="stats-grid">
     <div class="stat" data-reveal><b data-count="10" data-suffix="+">0</b><p>Years in product, regulated health through to consumer subscriptions.</p></div>
     <div class="stat" data-reveal><b data-count="3">0</b><p>Ventures founded. One acquired.</p></div>
-    <div class="stat" data-reveal><b data-count="10" data-suffix="+">0</b><p>People led across product, design and engineering.</p></div>
-    <div class="stat" data-reveal><b data-count="24">0</b><p>Countries running products I have worked on.</p></div>
+    <div class="stat" data-reveal><b data-count="20" data-suffix="+">0</b><p>People led, none of whom hate me (that I know of).</p></div>
+    <div class="stat" data-reveal><b data-count="43">0</b><p>Countries running products I have worked on.</p></div>
   </div>
 
   <div class="about-body">
     <div data-reveal>
-      <p>I run product where regulation, hardware and habit collide. Clinical platforms used across two dozen countries, a hearing product built on headphones people already own, and two subscription businesses I started myself.</p>
-      <p>What I am actually good at is getting people to commit to a direction. Executives, engineers, enterprise clients and the occasional sceptical clinician. I have led teams of 10+ across product, design and engineering, and I still write the briefs.</p>
+      <p>I build what’s next.<p>
+      <p>I work where emerging regulation, hardware, and habit collide. I’ve built clinical platforms used across 40+ markets, reimagined hearing experiences around devices people already own, and created subscription products from the ground up.</p>
+      <p>The part I care about most is turning uncertainty into direction. Aligning executives, engineers, customers, and clinicians around the thing worth building. Making the hard choices. Knowing what to leave behind.</p>
+      <p>I lead product teams across product, design, and engineering, but I still prototype every day, ask the uncomfortable questions, and stay close to the details.</p>
     </div>
     <div data-reveal>
-      <p>The work I like is the unglamorous part. Choosing which signal earns someone's attention. Deciding what to cut. Turning a one-off build into something that ships a second time without a rewrite.</p>
-      <p>Right now that means agentic workflows and AI that has to survive contact with a real user, a real clinician and a real auditor.</p>
+      <p>The work I love is the invisible work: finding the signal in the noise, removing what doesn’t matter, and creating products that get better every time they ship.<p>
+      <p>Today, that means building AI and agentic experiences that don’t just demonstrate what’s possible — but earn trust in the real world, with real users, clinicians, and the standards that matter.</p>
     </div>
   </div>
 </section>
@@ -702,11 +713,11 @@ footer{padding:0 var(--pad) 28px}
       <figcaption class="mono">Toronto, 2026</figcaption>
     </figure>
     <div class="contact-copy">
-      <h2 class="big" data-reveal>Tell me what is not working and I will tell you if I can help.</h2>
+      <h2 class="big" data-reveal>Let's work together.</h2>
       <div class="cta-links" data-reveal>
         <!-- TODO-CONTACT: replace both links -->
-        <a href="mailto:hello@example.com">hello@example.com <i>&#8599;</i></a>
-        <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn <i>&#8599;</i></a>
+        <a href="mailto:nickrjperry@gmail.com">nickrjperry@gmail.com <i>&#8599;</i></a>
+        <a href="https://www.linkedin.com/in/nicholasrjperry//" target="_blank" rel="noopener">LinkedIn <i>&#8599;</i></a>
       </div>
     </div>
   </div>
@@ -716,14 +727,17 @@ footer{padding:0 var(--pad) 28px}
   <div class="wordmark" data-reveal>NICK</div>
   <div class="foot-row mono">
     <span>Toronto, Ontario</span>
-    <span>One HTML file, no framework</span>
+    <span>V1.1</span>
     <span>&copy; 2026</span>
   </div>
 </footer>
 
 <script>
 document.documentElement.classList.add('js');
-var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function mq(q){
+  try { return window.matchMedia(q); } catch (e) { return { matches:false, addListener:function(){} }; }
+}
+var reduce = mq('(prefers-reduced-motion: reduce)').matches;
 
 /* hero word reveal */
 (function(){
@@ -850,45 +864,52 @@ var Cases = (function(){
   items.forEach(function(el){ io.observe(el); });
 })();
 
-/* pathway rail + image carousel, driven by the pinned scroll distance */
+/* case pinning: the card is translated down as you scroll, so it holds still on
+   screen while the carousel turns and the rail advances, then it releases.
+   Done with transform rather than position:sticky, which any clipped ancestor can break. */
 (function(){
   var bodies = Array.prototype.slice.call(document.querySelectorAll('.case-body'));
-  var narrow = window.matchMedia('(max-width:900px)');
-  var noPin = window.matchMedia('(max-width:900px), (prefers-reduced-motion: reduce)');
+  var narrow = mq('(max-width:900px)');
+  var noPin = mq('(max-width:900px), (prefers-reduced-motion: reduce)');
   var queued = false;
 
+  /* image 2 lands at 42% of the pinned scroll, image 3 at 90% */
+  var K = [0, 0.42, 0.90, 1];
   function smooth(t){ return t * t * (3 - 2 * t); }
   function slidePos(p){
-    if (p < 0.18) return 0;
-    if (p < 0.40) return smooth((p - 0.18) / 0.22);
+    if (p < 0.10) return 0;
+    if (p < K[1]) return smooth((p - 0.10) / (K[1] - 0.10));
     if (p < 0.58) return 1;
-    if (p < 0.80) return 1 + smooth((p - 0.58) / 0.22);
+    if (p < K[2]) return 1 + smooth((p - 0.58) / (K[2] - 0.58));
     return 2;
   }
-  /* map raw progress onto the rail so each node is reached exactly as its image lands */
+  /* the rail moves continuously, hitting each node exactly as its image lands */
   function railAt(p, xs){
-    var ps = [0, 0.40, 0.80, 1], vs = [xs[0], xs[1], xs[2], 1];
-    for (var i = 1; i < ps.length; i++){
-      if (p <= ps[i]) return vs[i-1] + (vs[i] - vs[i-1]) * ((p - ps[i-1]) / (ps[i] - ps[i-1]));
+    var vs = [xs[0], xs[1], xs[2], 1];
+    for (var i = 1; i < K.length; i++){
+      if (p <= K[i]) return vs[i-1] + (vs[i] - vs[i-1]) * ((p - K[i-1]) / (K[i] - K[i-1]));
     }
     return 1;
   }
+
   function metrics(b){
     var m = b._m;
-    if (!m || m.w !== b.offsetWidth){
-      var path = b.querySelector('.pathway'), w = path.offsetWidth || 1;
+    if (!m || m.w !== b.offsetWidth || m.vh !== window.innerHeight){
+      var inner = b.parentNode;
+      inner.style.transform = '';
+      var path = b.querySelector('.pathway'), w = (path && path.offsetWidth) || 1;
       var stages = Array.prototype.slice.call(b.querySelectorAll('.stage'));
       m = {
-        w: b.offsetWidth,
+        w: b.offsetWidth, vh: window.innerHeight, inner: inner, track: inner.parentNode,
         xs: stages.map(function(st){ return (st.offsetLeft + 4.5) / w; }),
         stages: stages,
         fill: b.querySelector('.rail-fill'),
         strip: b.querySelector('.strip'),
-        dots: b.querySelectorAll('.dots i'),
-        inner: b.parentNode,
-        track: b.parentNode.parentNode
+        dots: b.querySelectorAll('.dots i')
       };
-      m.stickyTop = parseFloat(getComputedStyle(m.inner).top) || 0;
+      m.contentH = inner.offsetHeight;
+      /* hold the card in the middle of the screen, not jammed under the nav */
+      m.top = Math.max(24, Math.round((m.vh - m.contentH) / 2));
       b._m = m;
     }
     return m;
@@ -900,17 +921,20 @@ var Cases = (function(){
     var vh = window.innerHeight, vert = narrow.matches, pin = !noPin.matches;
     bodies.forEach(function(b){
       if (!b.offsetParent || b.offsetHeight < 20) return;
-      var m = metrics(b), prog;
+      var m = metrics(b);
+      var tr = m.track.getBoundingClientRect();
+      if (tr.bottom < -120 || tr.top > vh + 120) return;
+      var prog;
 
       if (pin){
-        var tr = m.track.getBoundingClientRect();
-        if (tr.bottom < -200 || tr.top > vh + 200) return;
-        var travel = tr.height - m.inner.offsetHeight;
-        prog = travel > 8 ? (m.stickyTop - tr.top) / travel : 0;
+        var travel = Math.max(0, tr.height - m.contentH);
+        var y = Math.min(Math.max(m.top - tr.top, 0), travel);
+        m.inner.style.transform = y ? 'translate3d(0,' + y + 'px,0)' : '';
+        prog = travel > 8 ? y / travel : 0;
+        m.inner.classList.toggle('pinning', prog > 0.005 && prog < 0.995);
       } else {
-        var r = b.getBoundingClientRect();
-        if (r.bottom < -200 || r.top > vh + 200) return;
-        prog = (vh * 0.82 - r.top) / (r.height + vh * 0.3);
+        m.inner.style.transform = '';
+        prog = (vh * 0.82 - tr.top) / (tr.height + vh * 0.3);
       }
       prog = Math.max(0, Math.min(1, prog));
 
@@ -918,8 +942,7 @@ var Cases = (function(){
         ? 'scaleY(' + prog + ')'
         : 'scaleX(' + railAt(prog, m.xs) + ')';
 
-      var gates = [0, 0.34, 0.74];
-      m.stages.forEach(function(st, i){ st.classList.toggle('lit', prog >= gates[i]); });
+      m.stages.forEach(function(st, i){ st.classList.toggle('lit', prog >= K[i]); });
 
       if (m.strip){
         var pos = slidePos(prog);
@@ -932,7 +955,9 @@ var Cases = (function(){
   function onScroll(){ if (!queued){ queued = true; requestAnimationFrame(draw); } }
   window.addEventListener('scroll', onScroll, {passive:true});
   window.addEventListener('resize', function(){ invalidate(); onScroll(); });
+  window.addEventListener('load', function(){ invalidate(); draw(); });
   Cases.subscribe(function(){ invalidate(); draw(); });
+  window.__pinDraw = draw;
   draw();
 })();
 
