@@ -14,12 +14,14 @@
   3. DUMMY DATA: case 01 outcome numbers are invented placeholders.
      Search "DUMMY" and replace before this goes anywhere real.
   4. Stats in the About section: search "data-count".
-  5. IMAGES: case 01 already has its three. For the rest, drop three
-     landscape files per case into /images named 02-problem.jpg,
-     02-solution.jpg, 02-outcome.jpg ... 05-outcome.jpg. Around
-     1800x760 or anything near 21:9. Until a file exists you get a
-     labelled placeholder, nothing breaks. Add class="fit" to a slide
-     if it is a screenshot you do not want cropped.
+  5. IMAGES: the house frame is 16:9. Export at 1920x1080 (or any
+     16:9 size) and the frame fills edge to edge with nothing cropped.
+     Anything not 16:9 gets centre-cropped to fit. To keep a specific
+     part of an off-ratio photo, add object-position to that img, eg
+     style="object-position:50% 25%" holds the top of the frame.
+     For screenshots and logos that must not be cropped at all, add
+     class="fit" to the slide, which fits the whole image inside the
+     frame and mattes the rest.
   6. Case 06 is deliberately redacted. Bar widths are inline styles.
   7. Your portrait is images/nick.jpg. Reframe it with object-position
      in the .portrait img rule if you want a different crop.
@@ -174,15 +176,21 @@ section{padding:clamp(72px,11vh,140px) var(--pad)}
 .pin-inner.pinning .pin-label{opacity:1}
 
 /* ---------- media strip ---------- */
-.media{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);aspect-ratio:21/8;max-height:40vh}
+/* House frame is 16:9. Width is derived from the height the pinned card can spare,
+   so the frame keeps its shape and stays completely filled instead of going letterbox. */
+.media-wrap{max-width:min(100%, 920px, max(220px, calc((100vh - 430px) * 1.7778)))}
+.media{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);aspect-ratio:16/9}
+.media-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:10px}
+.frame-label{color:var(--ink)}
 .strip{display:flex;width:300%;height:100%;will-change:transform}
 .js .strip{transition:transform .12s linear}
 .slide{position:relative;flex:0 0 33.3333%;height:100%;overflow:hidden;
   background-image:repeating-linear-gradient(135deg,transparent 0 9px,rgba(128,128,120,.10) 9px 10px)}
 .slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.slide figcaption{position:absolute;left:14px;top:12px;z-index:2;background:var(--paper);padding:5px 9px;border-radius:2px}
-.slide.is-empty figcaption{background:none;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;padding:0}
-.dots{position:absolute;right:14px;bottom:12px;z-index:2;display:flex;gap:6px}
+.slide figcaption{display:none}
+.slide.is-empty figcaption{display:block;position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);text-align:center;white-space:nowrap}
+.dots{display:flex;gap:6px;flex:0 0 auto}
 .dots i{display:block;width:22px;height:2px;background:var(--ink-35);opacity:.5;transition:background .3s linear,opacity .3s linear}
 .dots i.on{background:var(--accent);opacity:1}
 
@@ -207,7 +215,7 @@ section{padding:clamp(72px,11vh,140px) var(--pad)}
 .stage li{padding-left:15px;position:relative;margin-bottom:9px;max-width:40ch}
 .stage li::before{content:"";position:absolute;left:0;top:.68em;width:6px;height:1px;background:var(--ink-35)}
 .ph{color:var(--ink-35);font-style:italic}
-.slide.fit img{object-fit:contain;background:var(--card);padding:1.5%}
+.slide.fit img{object-fit:contain;background:var(--card);padding:0}
 .out-note{display:block;font-family:"Inter Tight",sans-serif;font-style:italic;font-size:12.5px;
   color:var(--ink-35);line-height:1.4;margin:-10px 0 18px}
 .cite{display:block;margin-top:16px;font-family:"IBM Plex Mono",monospace;font-size:10px;
@@ -269,7 +277,6 @@ footer{padding:0 var(--pad) 28px}
   .menu-btn{display:block}
   .case-head{grid-template-columns:30px 1fr 34px;gap:12px}
   .case-tags{grid-column:2;align-items:flex-start;padding-top:14px;flex-direction:row;flex-wrap:wrap}
-  .media{aspect-ratio:16/9;max-height:none}
   .js .pin-track{padding-bottom:76vh}
   .pin-label{display:none}
   .pathway{grid-template-columns:1fr;padding-top:0;padding-left:26px;gap:30px}
@@ -283,7 +290,6 @@ footer{padding:0 var(--pad) 28px}
   .about-body{grid-template-columns:1fr}
   /* while pinned on a small screen: one stage at a time, timeline runs left to right */
   .stacked .pin-label{display:flex}
-  .stacked .media{max-height:32vh}
   .stacked .pathway{padding-top:34px;padding-left:0;gap:0}
   .stacked .rail{top:0;bottom:auto;left:0;right:0;width:auto;height:1px}
   .stacked .rail-fill{width:100%;height:1px;transform:scaleX(0);transform-origin:left}
@@ -296,10 +302,25 @@ footer{padding:0 var(--pad) 28px}
 @media (max-width:520px){
   .stats-grid{grid-template-columns:1fr}
   /* trim the pinned card so it still fits the smallest phones */
-  .stacked .media{max-height:26vh}
   .stacked .out-panel{padding:16px}
   .stacked .stage li{margin-bottom:7px}
   .stacked .cite{margin-top:12px}
+}
+/* applied per case when a card is too tall to pin, before the frame is shrunk further */
+.tight .pathway{margin-top:24px;padding-top:28px}
+.tight .node{top:-33px}
+.tight .pin-label{padding-bottom:8px;margin-bottom:12px}
+.tight .out-panel{padding:18px 20px}
+.tight .out-lead{font-size:clamp(1.2rem,1.9vw,1.7rem);margin-bottom:13px}
+.tight .stage li{margin-bottom:7px}
+.tight .stage-out ul{padding-top:12px}
+.tight .cite{margin-top:11px}
+@media (max-height:820px){
+  .pathway{margin-top:26px;padding-top:28px}
+  .node{top:-33px}
+  .out-panel{padding:16px 18px}
+  .out-lead{font-size:clamp(1.2rem,1.9vw,1.65rem);margin-bottom:14px}
+  .pin-label{padding-bottom:8px;margin-bottom:12px}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -366,13 +387,15 @@ footer{padding:0 var(--pad) 28px}
       <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
         <div class="pin-label mono"><b>01</b> Classified Title</div>
+        <div class="media-wrap">
         <div class="media">
           <div class="strip">
             <figure class="slide"><img src="images/01-problem.jpg" alt="Problem" loading="lazy"><figcaption class="mono">Problem</figcaption></figure>
             <figure class="slide fit"><img src="images/01-solution.png" alt="Solution" loading="lazy"><figcaption class="mono">Solution</figcaption></figure>
             <figure class="slide fit"><img src="images/01-outcome.png" alt="Outcome" loading="lazy"><figcaption class="mono">Outcome</figcaption></figure>
           </div>
-          <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+          <div class="media-bar mono"><span class="frame-label">Problem</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
         </div>
         <div class="pathway">
           <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
@@ -426,13 +449,15 @@ footer{padding:0 var(--pad) 28px}
       <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
         <div class="pin-label mono"><b>02</b> Oryn</div>
+        <div class="media-wrap">
         <div class="media">
           <div class="strip">
             <figure class="slide"><img src="images/02-problem.jpg" alt="Problem" loading="lazy"><figcaption class="mono">Problem</figcaption></figure>
             <figure class="slide"><img src="images/02-solution.jpg" alt="Solution" loading="lazy"><figcaption class="mono">Solution</figcaption></figure>
             <figure class="slide"><img src="images/02-outcome.jpg" alt="Outcome" loading="lazy"><figcaption class="mono">Outcome</figcaption></figure>
           </div>
-          <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+          <div class="media-bar mono"><span class="frame-label">Problem</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
         </div>
         <div class="pathway">
           <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
@@ -483,13 +508,15 @@ footer{padding:0 var(--pad) 28px}
       <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
         <div class="pin-label mono"><b>03</b> Growzen</div>
+        <div class="media-wrap">
         <div class="media">
           <div class="strip">
             <figure class="slide"><img src="images/03-problem.jpg" alt="Problem" loading="lazy"><figcaption class="mono">Problem</figcaption></figure>
             <figure class="slide"><img src="images/03-solution.jpg" alt="Solution" loading="lazy"><figcaption class="mono">Solution</figcaption></figure>
             <figure class="slide"><img src="images/03-outcome.jpg" alt="Outcome" loading="lazy"><figcaption class="mono">Outcome</figcaption></figure>
           </div>
-          <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+          <div class="media-bar mono"><span class="frame-label">Problem</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
         </div>
         <div class="pathway">
           <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
@@ -542,13 +569,15 @@ footer{padding:0 var(--pad) 28px}
       <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
         <div class="pin-label mono"><b>04</b> Drool</div>
+        <div class="media-wrap">
         <div class="media">
           <div class="strip">
             <figure class="slide"><img src="images/04-problem.jpg" alt="Problem" loading="lazy"><figcaption class="mono">Problem</figcaption></figure>
             <figure class="slide"><img src="images/04-solution.jpg" alt="Solution" loading="lazy"><figcaption class="mono">Solution</figcaption></figure>
             <figure class="slide"><img src="images/04-outcome.jpg" alt="Outcome" loading="lazy"><figcaption class="mono">Outcome</figcaption></figure>
           </div>
-          <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+          <div class="media-bar mono"><span class="frame-label">Problem</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
         </div>
         <div class="pathway">
           <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
@@ -599,13 +628,15 @@ footer{padding:0 var(--pad) 28px}
       <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
         <div class="pin-label mono"><b>05</b> Opal</div>
+        <div class="media-wrap">
         <div class="media">
           <div class="strip">
             <figure class="slide"><img src="images/05-problem.jpg" alt="Problem" loading="lazy"><figcaption class="mono">Problem</figcaption></figure>
             <figure class="slide"><img src="images/05-solution.jpg" alt="Solution" loading="lazy"><figcaption class="mono">Solution</figcaption></figure>
             <figure class="slide"><img src="images/05-outcome.jpg" alt="Outcome" loading="lazy"><figcaption class="mono">Outcome</figcaption></figure>
           </div>
-          <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+          <div class="media-bar mono"><span class="frame-label">Problem</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
         </div>
         <div class="pathway">
           <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
@@ -656,13 +687,15 @@ footer{padding:0 var(--pad) 28px}
       <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
         <div class="pin-label mono"><b>06</b> Classified</div>
+        <div class="media-wrap">
         <div class="media">
           <div class="strip">
             <figure class="slide is-empty"><figcaption class="mono">Restricted</figcaption></figure>
             <figure class="slide is-empty"><figcaption class="mono">Restricted</figcaption></figure>
             <figure class="slide is-empty"><figcaption class="mono">Restricted</figcaption></figure>
           </div>
-          <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+          <div class="media-bar mono"><span class="frame-label">Problem</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
         </div>
         <div class="pathway">
           <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
@@ -752,7 +785,7 @@ footer{padding:0 var(--pad) 28px}
   <div class="wordmark" data-reveal>NICK</div>
   <div class="foot-row mono">
     <span>Toronto, Ontario</span>
-    <span>V1.2</span>
+    <span>V1.6</span>
     <span>&copy; 2026</span>
   </div>
 </footer>
@@ -896,11 +929,12 @@ var Cases = (function(){
   var bodies = Array.prototype.slice.call(document.querySelectorAll('.case-body'));
   var narrow = mq('(max-width:900px)');
   var still = mq('(prefers-reduced-motion: reduce)');
-  var queued = false;
+  var queued = false, framesDirty = true;
 
   /* image 2 lands at 42% of the pinned scroll, image 3 at 90% */
   var K = [0, 0.42, 0.90, 1];
   var FLAT = [0, 0.5, 1];
+  var FRAMES = ['Problem', 'Solution', 'Outcome'];
   function smooth(t){ return t * t * (3 - 2 * t); }
   function slidePos(p){
     if (p < 0.10) return 0;
@@ -927,14 +961,47 @@ var Cases = (function(){
     inner.style.transform = '';
     track.style.paddingBottom = '';
     b.classList.toggle('stacked', mobile && wantPin);
+    b.classList.remove('tight');
 
     var path = b.querySelector('.pathway'), w = (path && path.offsetWidth) || 1;
     var stages = Array.prototype.slice.call(b.querySelectorAll('.stage'));
+    var wrap = b.querySelector('.media-wrap');
+    if (wrap) wrap.style.maxWidth = '';
     var contentH = inner.offsetHeight;
-    /* only pin if the whole card fits on screen, otherwise let it scroll normally */
-    var pin = wantPin && contentH <= vh - 24;
+
+    /* the card has to fit on screen to be worth pinning. If it does not, shrink the
+       image strip until it does rather than giving up on the pin. */
+    var room = vh - 20, frame = b.querySelector('.media');
+
+    /* Fit the card to the window in stages, tallest-first:
+       1. narrow the frame, keeping 16:9 intact
+       2. if the frame hits its floor, tighten the card spacing and narrow again
+       Repeat until it fits or there is nothing left to give. */
+    function shrink(){
+      for (var pass = 0; pass < 4; pass++){
+        var over = contentH - room;
+        if (over <= 0) return true;
+        if (!wrap || !frame) return false;
+        var target = frame.offsetHeight - over - 6;
+        if (target < 150) target = 150;
+        if (Math.round(target) >= Math.round(frame.offsetHeight)) return false;
+        wrap.style.maxWidth = Math.round(target * 16 / 9) + 'px';
+        contentH = inner.offsetHeight;
+      }
+      return contentH <= room;
+    }
+    var fits = shrink();
+    if (!fits){
+      b.classList.add('tight');
+      contentH = inner.offsetHeight;
+      fits = shrink();
+    }
+
+    var pin = wantPin && fits;
     if (!pin){
       b.classList.remove('stacked');
+      b.classList.remove('tight');
+      if (wrap) wrap.style.maxWidth = '';
       contentH = inner.offsetHeight;
       track.style.paddingBottom = 'clamp(34px,5vh,58px)';
     }
@@ -942,23 +1009,54 @@ var Cases = (function(){
     m = {
       w: b.offsetWidth, vh: vh, mobile: mobile, want: wantPin,
       pin: pin, stacked: pin && mobile, contentH: contentH,
+      tight: b.classList.contains('tight'),
       inner: inner, track: track, stages: stages,
       xs: stages.map(function(st){ return (st.offsetLeft + 4.5) / w; }),
       fill: b.querySelector('.rail-fill'),
       strip: b.querySelector('.strip'),
       dots: Array.prototype.slice.call(b.querySelectorAll('.dots i')),
+      label: b.querySelector('.frame-label'),
+      frameW: frame ? frame.offsetWidth : 0,
       rn: Array.prototype.slice.call(b.querySelectorAll('.rn'))
     };
     /* hold the card in the middle of the screen */
     m.top = Math.max(16, Math.round((vh - contentH) / 2));
     b._m = m;
+    framesDirty = true;
     return m;
   }
-  function invalidate(){ bodies.forEach(function(b){ b._m = null; }); }
+  function invalidate(){ bodies.forEach(function(b){ b._m = null; }); framesDirty = true; }
+
+  /* Every case gets the same frame size, set by whichever card needs the most room.
+     A portfolio where one image is smaller than the rest looks like a mistake. */
+  function syncFrames(vh, mobile, wantPin){
+    framesDirty = false;
+    var minW = Infinity, anyTight = false, list = [];
+    bodies.forEach(function(b){
+      if (!b.offsetParent || b.offsetHeight < 20) return;
+      var m = metrics(b, vh, mobile, wantPin);
+      if (!m.pin) return;
+      list.push(b);
+      if (m.frameW) minW = Math.min(minW, m.frameW);
+      if (m.tight) anyTight = true;
+    });
+    if (!list.length || minW === Infinity) return;
+    list.forEach(function(b){
+      var m = b._m;
+      if (anyTight) b.classList.add('tight');
+      var wrap = b.querySelector('.media-wrap');
+      if (wrap) wrap.style.maxWidth = Math.round(minW) + 'px';
+      m.contentH = m.inner.offsetHeight;
+      m.top = Math.max(16, Math.round((vh - m.contentH) / 2));
+      m.frameW = minW;
+      m.tight = b.classList.contains('tight');
+    });
+  }
 
   function draw(){
     queued = false;
     var vh = window.innerHeight, mobile = narrow.matches, wantPin = !still.matches;
+    if (framesDirty) syncFrames(vh, mobile, wantPin);
     bodies.forEach(function(b){
       if (!b.offsetParent || b.offsetHeight < 20) return;
       var m = metrics(b, vh, mobile, wantPin);
@@ -993,6 +1091,7 @@ var Cases = (function(){
       if (m.strip){
         m.strip.style.transform = 'translateX(' + (-pos * 33.3333) + '%)';
         m.dots.forEach(function(d, i){ d.classList.toggle('on', i === active); });
+        if (m.label && m.label.textContent !== FRAMES[active]) m.label.textContent = FRAMES[active];
       }
     });
   }
@@ -1009,6 +1108,17 @@ var Cases = (function(){
   window.addEventListener('load', function(){ invalidate(); draw(); });
   Cases.subscribe(function(){ invalidate(); draw(); });
   window.__pinDraw = draw;
+  /* type __pinReport() in the browser console to see what each case decided */
+  window.__pinReport = function(){
+    bodies.forEach(function(b, i){
+      var m = b._m;
+      console.log('case ' + (i + 1) + '  pin:' + (m ? m.pin : 'not measured')
+        + '  card:' + (m ? m.contentH : '?') + 'px  window:' + window.innerHeight + 'px'
+        + '  frame:' + (m ? Math.round(m.frameW) : '?') + 'px'
+        + '  tightened:' + (m ? m.tight : '?')
+        + '  stacked:' + (m ? m.stacked : '?'));
+    });
+  };
   draw();
 })();
 
