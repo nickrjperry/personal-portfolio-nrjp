@@ -178,7 +178,7 @@ section{padding:clamp(72px,11vh,140px) var(--pad)}
 /* ---------- media strip ---------- */
 /* House frame is 16:9. Width is derived from the height the pinned card can spare,
    so the frame keeps its shape and stays completely filled instead of going letterbox. */
-.media-wrap{max-width:min(100%, 920px, max(220px, calc((100vh - 430px) * 1.7778)))}
+.media-wrap{max-width:min(100%, 1240px, max(320px, calc((100vh - 330px) * 1.7778)))}
 .media{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);aspect-ratio:16/9}
 .media-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:10px}
 .frame-label{color:var(--ink)}
@@ -785,7 +785,7 @@ footer{padding:0 var(--pad) 28px}
   <div class="wordmark" data-reveal>NICK</div>
   <div class="foot-row mono">
     <span>Toronto, Ontario</span>
-    <span>V1.6</span>
+    <span>V1.8</span>
     <span>&copy; 2026</span>
   </div>
 </footer>
@@ -838,12 +838,24 @@ var reduce = mq('(prefers-reduced-motion: reduce)').matches;
   ov.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ toggle(false); }); });
 })();
 
-/* missing images fall back to a labelled placeholder */
+/* each image tries its own extension, then the other common ones, before giving up */
 document.querySelectorAll('.slide img').forEach(function(img){
+  var src = img.getAttribute('src');                    // e.g. images/03-solution.jpg
+  var dot = src.lastIndexOf('.');
+  var base = dot > -1 ? src.slice(0, dot) : src;
+  var given = dot > -1 ? src.slice(dot + 1).toLowerCase() : '';
+  var exts = [given, 'jpg', 'jpeg', 'png', 'webp'].filter(function(e, i, a){ return e && a.indexOf(e) === i; });
+  var i = 0;
   function fail(){ img.style.display = 'none'; img.parentNode.classList.add('is-empty');
-    img.parentNode.querySelector('figcaption').textContent = img.parentNode.querySelector('figcaption').textContent + ' image'; }
-  img.addEventListener('error', fail);
-  if (img.complete && img.naturalWidth === 0) fail();
+    var cap = img.parentNode.querySelector('figcaption');
+    if (cap.textContent.indexOf(' image') === -1) cap.textContent = cap.textContent + ' image'; }
+  function tryNext(){
+    if (i >= exts.length){ fail(); return; }
+    img.src = base + '.' + exts[i++];
+  }
+  img.addEventListener('error', tryNext);
+  // if the first source already failed to load, move on
+  if (img.complete && img.naturalWidth === 0) tryNext();
 });
 
 /* collapsible cases */
