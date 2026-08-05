@@ -14,13 +14,13 @@
   3. DUMMY DATA: case 01 outcome numbers are invented placeholders.
      Search "DUMMY" and replace before this goes anywhere real.
   4. Stats in the About section: search "data-count".
-  5. IMAGES: the house frame is 16:9. Export at 1920x1080 (or any
-     16:9 size) and the frame fills edge to edge with nothing cropped.
-     Anything not 16:9 gets centre-cropped to fit. To keep a specific
-     part of an off-ratio photo, add object-position to that img, eg
-     style="object-position:50% 25%" holds the top of the frame.
-     For screenshots and logos that must not be cropped at all, add
-     class="fit" to the slide, which fits the whole image inside the
+  5. IMAGES: each case shows a sliding row (marquee) of square PNG tiles that
+     loops forever. Files live in /images and are named per case:
+       dcp-01..dcp-06, oryn-01..oryn-06, growzen-01..growzen-06,
+       drool-01..drool-05, opal-01..opal-05  (all .png)
+     To add or remove a tile, edit that case's marquee-track and change BOTH
+     copies of the set so the loop stays seamless. Square images look best.
+     Add class="fit" to a tile for a screenshot you do not want cropped.
      frame and mattes the rest.
   6. Case 06 is deliberately redacted. Bar widths are inline styles.
   7. Your portrait is images/nick.jpg. Reframe it with object-position
@@ -165,37 +165,27 @@ section{padding:clamp(72px,11vh,140px) var(--pad)}
 .case-head[aria-expanded="true"] .plus::after{transform:translate(-50%,-50%) rotate(0deg);opacity:0}
 
 .js .panel{max-height:0;overflow:hidden;transition:max-height .75s var(--ease)}
-.case-body{margin:0 0 0 var(--rail-offset)}
-/* pinning: the case holds still while the carousel steps through its three images */
-.pin-track{position:relative;padding-bottom:clamp(34px,5vh,58px)}
-.js .pin-track{padding-bottom:88vh}
-.pin-inner{will-change:transform}
-.pin-label{display:flex;gap:12px;align-items:baseline;padding-bottom:10px;margin-bottom:16px;
-  border-bottom:1px solid var(--line);opacity:0;transition:opacity .45s var(--ease)}
-.pin-label b{color:var(--accent);font-weight:400}
-.pin-inner.pinning .pin-label{opacity:1}
+.case-body{margin:0 0 clamp(30px,4vh,50px) var(--rail-offset)}
 
-/* ---------- media strip ---------- */
-/* House frame is 16:9. Width is derived from the height the pinned card can spare,
-   so the frame keeps its shape and stays completely filled instead of going letterbox. */
-.media-wrap{max-width:min(100%, 1240px, max(320px, calc((100vh - 330px) * 1.7778)))}
-.media{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);aspect-ratio:16/9}
-.media-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:10px}
-.frame-label{color:var(--ink)}
-.strip{display:flex;width:300%;height:100%;will-change:transform}
-.js .strip{transition:transform .12s linear}
-.slide{position:relative;flex:0 0 33.3333%;height:100%;overflow:hidden;
-  background-image:repeating-linear-gradient(135deg,transparent 0 9px,rgba(128,128,120,.10) 9px 10px)}
-.slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.slide figcaption{display:none}
-.slide.is-empty figcaption{display:block;position:absolute;left:50%;top:50%;
-  transform:translate(-50%,-50%);text-align:center;white-space:nowrap}
-.dots{display:flex;gap:6px;flex:0 0 auto}
-.dots i{display:block;width:22px;height:2px;background:var(--ink-35);opacity:.5;transition:background .3s linear,opacity .3s linear}
-.dots i.on{background:var(--accent);opacity:1}
+/* ---------- marquee: a row of square tiles sliding right to left, looping ---------- */
+.marquee{position:relative;width:100%;overflow:hidden;margin:0 0 clamp(28px,4vh,46px);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.marquee-track{display:flex;width:max-content;gap:16px;will-change:transform}
+.js .marquee-track{animation:march var(--dur,60s) linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+@keyframes march{from{transform:translateX(0)}to{transform:translateX(calc(-50% - 8px))}}
+.tile{position:relative;flex:0 0 auto;width:clamp(220px,26vw,340px);aspect-ratio:1/1;
+  overflow:hidden;background:var(--card);border:1px solid var(--line)}
+.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.tile.fit img{object-fit:contain;background:var(--card)}
+.tile figcaption{position:absolute;left:12px;bottom:11px;z-index:2;background:var(--paper);
+  padding:4px 9px;border-radius:2px}
+.tile.is-empty img{display:none}
+.tile.is-empty figcaption{left:50%;top:50%;bottom:auto;transform:translate(-50%,-50%);white-space:nowrap}
 
-/* ---------- pathway ---------- */
-.pathway{position:relative;display:grid;grid-template-columns:1fr 1fr 1.42fr;gap:clamp(20px,3vw,44px);margin-top:clamp(30px,4.5vh,50px);padding-top:34px}
+/* pathway (Problem / Solution / Outcome text) ------------------------------------ */
+.pathway{position:relative;display:grid;grid-template-columns:1fr 1fr 1.42fr;gap:clamp(20px,3vw,44px);margin-top:clamp(10px,2vh,24px);padding-top:34px}
 .rail{position:absolute;top:0;left:0;right:0;height:1px;background:var(--line)}
 .rail-fill{display:block;height:1px;width:100%;background:var(--accent);transform:scaleX(0);transform-origin:left}
 .js .rail-fill{transition:transform .12s linear}
@@ -203,34 +193,20 @@ section{padding:clamp(72px,11vh,140px) var(--pad)}
 .node{position:absolute;top:-39px;left:0;width:9px;height:9px;border-radius:50%;background:var(--paper);border:1px solid var(--line);
   transition:background .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease)}
 .stage.lit .node{background:var(--accent);border-color:var(--accent);transform:scale(1.15)}
-.rail .rn{display:none;position:absolute;top:-4px;width:9px;height:9px;border-radius:50%;
-  background:var(--paper);border:1px solid var(--line);
-  transition:background .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease)}
-.rail i.rn:nth-of-type(1){left:0}
-.rail i.rn:nth-of-type(2){left:calc(50% - 4.5px)}
-.rail i.rn:nth-of-type(3){left:calc(100% - 9px)}
-.rail .rn.lit{background:var(--accent);border-color:var(--accent);transform:scale(1.15)}
 .stage h3{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-60);margin-bottom:14px;transition:color .35s linear}
 .stage.lit h3{color:var(--ink)}
 .stage li{padding-left:15px;position:relative;margin-bottom:9px;max-width:40ch}
 .stage li::before{content:"";position:absolute;left:0;top:.68em;width:6px;height:1px;background:var(--ink-35)}
 .ph{color:var(--ink-35);font-style:italic}
-.slide.fit img{object-fit:contain;background:var(--card);padding:0}
-.out-note{display:block;font-family:"Inter Tight",sans-serif;font-style:italic;font-size:12.5px;
-  color:var(--ink-35);line-height:1.4;margin:-10px 0 18px}
 .cite{display:block;margin-top:16px;font-family:"IBM Plex Mono",monospace;font-size:10px;
   letter-spacing:.05em;color:var(--ink-35);line-height:1.6}
 .cite a{border-bottom:1px solid var(--line)}
 .cite a:hover{color:var(--accent);border-color:var(--accent)}
+.out-note{display:block;font-family:"Inter Tight",sans-serif;font-style:italic;font-size:12.5px;color:var(--ink-35);line-height:1.4;margin:-10px 0 18px}
 .bar{display:block;height:.95em;border-radius:2px;background:var(--ink);opacity:.13}
 .redact{margin-bottom:12px}
-
-/* outcome, the loud one */
-.out-panel{background:var(--card);border:1px solid var(--line);border-top:2px solid var(--ink-35);
-  padding:clamp(18px,2.2vw,28px);transition:border-top-color .5s var(--ease)}
-.stage-out.lit .out-panel{border-top-color:var(--accent)}
-.out-lead{font-family:"Familjen Grotesk",sans-serif;font-weight:500;letter-spacing:-.03em;line-height:1.02;
-  font-size:clamp(1.35rem,2.35vw,2.1rem);margin-bottom:18px}
+.out-panel{background:var(--card);border:1px solid var(--line);border-top:2px solid var(--accent);padding:clamp(18px,2.2vw,28px)}
+.out-lead{font-family:"Familjen Grotesk",sans-serif;font-weight:500;letter-spacing:-.03em;line-height:1.02;font-size:clamp(1.35rem,2.35vw,2.1rem);margin-bottom:18px}
 .out-lead.ph{font-family:"Inter Tight",sans-serif;letter-spacing:0;line-height:1.3;font-size:1rem}
 .stage-out ul{border-top:1px solid var(--line);padding-top:16px}
 .stage-out li{max-width:44ch;color:var(--ink-60)}
@@ -277,8 +253,7 @@ footer{padding:0 var(--pad) 28px}
   .menu-btn{display:block}
   .case-head{grid-template-columns:30px 1fr 34px;gap:12px}
   .case-tags{grid-column:2;align-items:flex-start;padding-top:14px;flex-direction:row;flex-wrap:wrap}
-  .js .pin-track{padding-bottom:76vh}
-  .pin-label{display:none}
+  .tile{width:clamp(180px,62vw,240px)}
   .pathway{grid-template-columns:1fr;padding-top:0;padding-left:26px;gap:30px}
   .rail{top:6px;bottom:6px;left:0;right:auto;width:1px;height:auto}
   .rail-fill{width:1px;height:100%;transform:scaleY(0);transform-origin:top}
@@ -288,16 +263,6 @@ footer{padding:0 var(--pad) 28px}
   .portrait{aspect-ratio:3/2}
   .portrait img{object-position:60% 42%}
   .about-body{grid-template-columns:1fr}
-  /* while pinned on a small screen: one stage at a time, timeline runs left to right */
-  .stacked .pin-label{display:flex}
-  .stacked .pathway{padding-top:34px;padding-left:0;gap:0}
-  .stacked .rail{top:0;bottom:auto;left:0;right:0;width:auto;height:1px}
-  .stacked .rail-fill{width:100%;height:1px;transform:scaleX(0);transform-origin:left}
-  .stacked .stage{grid-column:1;grid-row:1;opacity:0;transform:translateY(14px);pointer-events:none;
-    transition:opacity .5s var(--ease),transform .5s var(--ease)}
-  .stacked .stage.active{opacity:1;transform:none;pointer-events:auto}
-  .stacked .stage .node{display:none}
-  .stacked .rail .rn{display:block}
 }
 @media (max-width:520px){
   .stats-grid{grid-template-columns:1fr}
@@ -315,20 +280,12 @@ footer{padding:0 var(--pad) 28px}
 .tight .stage li{margin-bottom:7px}
 .tight .stage-out ul{padding-top:12px}
 .tight .cite{margin-top:11px}
-@media (max-height:820px){
-  .pathway{margin-top:26px;padding-top:28px}
-  .node{top:-33px}
-  .out-panel{padding:16px 18px}
-  .out-lead{font-size:clamp(1.2rem,1.9vw,1.65rem);margin-bottom:14px}
-  .pin-label{padding-bottom:8px;margin-bottom:12px}
-}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .js .pin-track{padding-bottom:clamp(34px,5vh,58px)}
-  .pin-label{display:none}
   *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
   .js [data-reveal]{opacity:1;transform:none}
   .js .word span{transform:none}
+  .js .marquee-track{animation:none;flex-wrap:wrap;justify-content:flex-start}
   .rail-fill{transform:none!important}
 }
 </style>
@@ -384,53 +341,15 @@ footer{padding:0 var(--pad) 28px}
       <span class="plus"></span>
     </button></h2>
     <div class="panel" id="c1" role="region" aria-labelledby="c1-btn">
-      <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
-        <div class="pin-label mono"><b>01</b> Classified Title</div>
-        <div class="media-wrap">
-        <div class="media">
-          <div class="strip">
-            <figure class="slide"><img src="images/01-problem.png" alt="Problem" loading="lazy"><figcaption class="mono">Problem</figcaption></figure>
-            <figure class="slide fit"><img src="images/01-solution.png" alt="Solution" loading="lazy"><figcaption class="mono">Solution</figcaption></figure>
-            <figure class="slide fit"><img src="images/01-outcome.png" alt="Outcome" loading="lazy"><figcaption class="mono">Outcome</figcaption></figure>
-          </div>
-        </div>
-          <div class="media-bar mono"><span class="frame-label">Problem</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
-        </div>
+        <div class="marquee" style="--dur:54s"><div class="marquee-track"><figure class="tile"><img src="images/dcp-01.png" alt="Dcp 1" loading="lazy"><figcaption class="mono">01</figcaption></figure><figure class="tile"><img src="images/dcp-02.png" alt="Dcp 2" loading="lazy"><figcaption class="mono">02</figcaption></figure><figure class="tile"><img src="images/dcp-03.png" alt="Dcp 3" loading="lazy"><figcaption class="mono">03</figcaption></figure><figure class="tile"><img src="images/dcp-04.png" alt="Dcp 4" loading="lazy"><figcaption class="mono">04</figcaption></figure><figure class="tile"><img src="images/dcp-05.png" alt="Dcp 5" loading="lazy"><figcaption class="mono">05</figcaption></figure><figure class="tile"><img src="images/dcp-06.png" alt="Dcp 6" loading="lazy"><figcaption class="mono">06</figcaption></figure><figure class="tile"><img src="images/dcp-01.png" alt="Dcp 1" loading="lazy"><figcaption class="mono">01</figcaption></figure><figure class="tile"><img src="images/dcp-02.png" alt="Dcp 2" loading="lazy"><figcaption class="mono">02</figcaption></figure><figure class="tile"><img src="images/dcp-03.png" alt="Dcp 3" loading="lazy"><figcaption class="mono">03</figcaption></figure><figure class="tile"><img src="images/dcp-04.png" alt="Dcp 4" loading="lazy"><figcaption class="mono">04</figcaption></figure><figure class="tile"><img src="images/dcp-05.png" alt="Dcp 5" loading="lazy"><figcaption class="mono">05</figcaption></figure><figure class="tile"><img src="images/dcp-06.png" alt="Dcp 6" loading="lazy"><figcaption class="mono">06</figcaption></figure></div></div>
         <div class="pathway">
-          <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
-          <div class="stage">
-            <span class="node"></span><h3>Problem</h3>
-            <ul>
-              <li>Clinicians are bound to the EHR for patient data, and the EHR knows nothing about what happens between appointments.</li>
-              <li>That gap is where adherence quietly slips, symptoms escalate and treatment decisions get made on five week old information.</li>
-              <li>The patient-reported and biometric data existed. It just had nowhere clinical to land.</li>
-            </ul>
-          </div>
-          <div class="stage">
-            <span class="node"></span><h3>Solution</h3>
-            <ul>
-              <li>Dawn apps collect patient-reported and biometric data, then deliver it into the clinician workflow through CLASSIFIED.</li>
-              <li>Adaptive cards surface adherence, new symptoms and trend direction the moment the chart opens. No second login, no new interface to learn.</li>
-              <li>Four flows behind it: Recap, Record, Signal and Sync, each tied to a real moment in the visit.</li>
-            </ul>
-          </div>
-          <div class="stage stage-out">
-            <span class="node"></span><h3>Outcome</h3>
-            <div class="out-panel">
-              <p class="out-lead">87% HCP support</p>
-              <span class="out-note">for the AI-generated pre-consultation report</span>
-              <ul>
-              <li>4.2 minutes saved per consult on chart review.</li>
-              <li>3.1x more patient-reported data reaching the clinician before the visit.</li>
-              <li>61% of flagged adherence drops actioned in the same appointment.</li>
-              </ul>
-              <!-- Temporary metrics. Replace with real pilot numbers before sending this to anyone. -->
-            </div>
-          </div>
+          <span class="rail"><span class="rail-fill"></span></span>
+          <div class="stage"><span class="node"></span><h3>Problem</h3><ul><li>Clinicians are bound to the EHR for patient data, and the EHR knows nothing about what happens between appointments.</li><li>That gap is where adherence quietly slips, symptoms escalate and treatment decisions get made on five week old information.</li><li>The patient-reported and biometric data existed. It just had nowhere clinical to land.</li></ul></div>
+          <div class="stage"><span class="node"></span><h3>Solution</h3><ul><li>Dawn apps collect patient-reported and biometric data, then deliver it into the clinician workflow through CLASSIFIED.</li><li>Adaptive cards surface adherence, new symptoms and trend direction the moment the chart opens. No second login, no new interface to learn.</li><li>Four flows behind it: Recap, Record, Signal and Sync, each tied to a real moment in the visit.</li></ul></div>
+          <div class="stage stage-out"><span class="node"></span><h3>Outcome</h3><div class="out-panel"><p class="out-lead">87% HCP support</p><span class="out-note">for the AI-generated pre-consultation report</span><ul><li>4.2 minutes saved per consult on chart review.</li><li>3.1x more patient-reported data reaching the clinician before the visit.</li><li>61% of flagged adherence drops actioned in the same appointment.</li></ul></div></div>
         </div>
       </div>
-      </div></div>
     </div>
   </article>
 
@@ -446,50 +365,15 @@ footer{padding:0 var(--pad) 28px}
       <span class="plus"></span>
     </button></h2>
     <div class="panel" id="c2" role="region" aria-labelledby="c2-btn">
-      <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
-        <div class="pin-label mono"><b>02</b> Oryn</div>
-        <div class="media-wrap">
-        <div class="media">
-          <div class="strip">
-            <figure class="slide"><img src="images/02-problem.jpg" alt="Problem" loading="lazy"><figcaption class="mono">Problem</figcaption></figure>
-            <figure class="slide"><img src="images/02-solution.jpg" alt="Solution" loading="lazy"><figcaption class="mono">Solution</figcaption></figure>
-            <figure class="slide"><img src="images/02-outcome.png" alt="Outcome" loading="lazy"><figcaption class="mono">Outcome</figcaption></figure>
-          </div>
-        </div>
-          <div class="media-bar mono"><span class="frame-label">Problem</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
-        </div>
+        <div class="marquee" style="--dur:54s"><div class="marquee-track"><figure class="tile"><img src="images/oryn-01.png" alt="Oryn 1" loading="lazy"><figcaption class="mono">01</figcaption></figure><figure class="tile"><img src="images/oryn-02.png" alt="Oryn 2" loading="lazy"><figcaption class="mono">02</figcaption></figure><figure class="tile"><img src="images/oryn-03.png" alt="Oryn 3" loading="lazy"><figcaption class="mono">03</figcaption></figure><figure class="tile"><img src="images/oryn-04.png" alt="Oryn 4" loading="lazy"><figcaption class="mono">04</figcaption></figure><figure class="tile"><img src="images/oryn-05.png" alt="Oryn 5" loading="lazy"><figcaption class="mono">05</figcaption></figure><figure class="tile"><img src="images/oryn-06.png" alt="Oryn 6" loading="lazy"><figcaption class="mono">06</figcaption></figure><figure class="tile"><img src="images/oryn-01.png" alt="Oryn 1" loading="lazy"><figcaption class="mono">01</figcaption></figure><figure class="tile"><img src="images/oryn-02.png" alt="Oryn 2" loading="lazy"><figcaption class="mono">02</figcaption></figure><figure class="tile"><img src="images/oryn-03.png" alt="Oryn 3" loading="lazy"><figcaption class="mono">03</figcaption></figure><figure class="tile"><img src="images/oryn-04.png" alt="Oryn 4" loading="lazy"><figcaption class="mono">04</figcaption></figure><figure class="tile"><img src="images/oryn-05.png" alt="Oryn 5" loading="lazy"><figcaption class="mono">05</figcaption></figure><figure class="tile"><img src="images/oryn-06.png" alt="Oryn 6" loading="lazy"><figcaption class="mono">06</figcaption></figure></div></div>
         <div class="pathway">
-          <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
-          <div class="stage">
-            <span class="node"></span><h3>Problem</h3>
-            <ul>
-              <li>Hearing aids cost thousands, take weeks to fit, and carry a stigma most people will not accept.</li>
-              <li>So people wait. Years, usually, and many never get past the clinic door at all.</li>
-              <li>Meanwhile the hardware sitting in their pocket already met the spec.</li>
-            </ul>
-          </div>
-          <div class="stage">
-            <span class="node"></span><h3>Solution</h3>
-            <ul>
-              <li>Built a mobile hearing test validated against a machine learning model trained on hundreds of thousands of audiograms and their real-world fittings.</li>
-              <li>Wrote the resulting audiogram into Apple Health, which turns AirPods and compatible Beats into low-powered hearing aids.</li>
-              <li>Priced it as a small monthly subscription instead of a medical device purchase, on hardware people already own.</li>
-            </ul>
-          </div>
-          <div class="stage stage-out">
-            <span class="node"></span><h3>Outcome</h3>
-            <div class="out-panel">
-              <p class="out-lead">Roughly 50x cheaper than a fitted hearing aid.</p>
-              <ul>
-              <li>Acquired. Terms confidential.</li>
-              <li>Co-founded and led product from audiogram research through to a shipped iOS product.</li>
-              </ul>
-            </div>
-          </div>
+          <span class="rail"><span class="rail-fill"></span></span>
+          <div class="stage"><span class="node"></span><h3>Problem</h3><ul><li>Hearing aids cost thousands, take weeks to fit, and carry a stigma most people will not accept.</li><li>So people wait. Years, usually, and many never get past the clinic door at all.</li><li>Meanwhile the hardware sitting in their pocket already met the spec.</li></ul></div>
+          <div class="stage"><span class="node"></span><h3>Solution</h3><ul><li>Built a mobile hearing test validated against a machine learning model trained on hundreds of thousands of audiograms and their real-world fittings.</li><li>Wrote the resulting audiogram into Apple Health, which turns AirPods and compatible Beats into low-powered hearing aids.</li><li>Priced it as a small monthly subscription instead of a medical device purchase, on hardware people already own.</li></ul></div>
+          <div class="stage stage-out"><span class="node"></span><h3>Outcome</h3><div class="out-panel"><p class="out-lead">Roughly 50x cheaper than a fitted hearing aid.</p><ul><li>Acquired. Terms confidential.</li><li>Co-founded and led product from audiogram research through to a shipped iOS product.</li></ul></div></div>
         </div>
       </div>
-      </div></div>
     </div>
   </article>
 
@@ -505,52 +389,15 @@ footer{padding:0 var(--pad) 28px}
       <span class="plus"></span>
     </button></h2>
     <div class="panel" id="c3" role="region" aria-labelledby="c3-btn">
-      <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
-        <div class="pin-label mono"><b>03</b> Growzen</div>
-        <div class="media-wrap">
-        <div class="media">
-          <div class="strip">
-            <figure class="slide"><img src="images/03-problem.png" alt="Problem" loading="lazy"><figcaption class="mono">Problem</figcaption></figure>
-            <figure class="slide"><img src="images/03-solution.png" alt="Solution" loading="lazy"><figcaption class="mono">Solution</figcaption></figure>
-            <figure class="slide"><img src="images/03-outcome.jpg" alt="Outcome" loading="lazy"><figcaption class="mono">Outcome</figcaption></figure>
-          </div>
-        </div>
-          <div class="media-bar mono"><span class="frame-label">Problem</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
-        </div>
+        <div class="marquee" style="--dur:54s"><div class="marquee-track"><figure class="tile"><img src="images/growzen-01.png" alt="Growzen 1" loading="lazy"><figcaption class="mono">01</figcaption></figure><figure class="tile"><img src="images/growzen-02.png" alt="Growzen 2" loading="lazy"><figcaption class="mono">02</figcaption></figure><figure class="tile"><img src="images/growzen-03.png" alt="Growzen 3" loading="lazy"><figcaption class="mono">03</figcaption></figure><figure class="tile"><img src="images/growzen-04.png" alt="Growzen 4" loading="lazy"><figcaption class="mono">04</figcaption></figure><figure class="tile"><img src="images/growzen-05.png" alt="Growzen 5" loading="lazy"><figcaption class="mono">05</figcaption></figure><figure class="tile"><img src="images/growzen-06.png" alt="Growzen 6" loading="lazy"><figcaption class="mono">06</figcaption></figure><figure class="tile"><img src="images/growzen-01.png" alt="Growzen 1" loading="lazy"><figcaption class="mono">01</figcaption></figure><figure class="tile"><img src="images/growzen-02.png" alt="Growzen 2" loading="lazy"><figcaption class="mono">02</figcaption></figure><figure class="tile"><img src="images/growzen-03.png" alt="Growzen 3" loading="lazy"><figcaption class="mono">03</figcaption></figure><figure class="tile"><img src="images/growzen-04.png" alt="Growzen 4" loading="lazy"><figcaption class="mono">04</figcaption></figure><figure class="tile"><img src="images/growzen-05.png" alt="Growzen 5" loading="lazy"><figcaption class="mono">05</figcaption></figure><figure class="tile"><img src="images/growzen-06.png" alt="Growzen 6" loading="lazy"><figcaption class="mono">06</figcaption></figure></div></div>
         <div class="pathway">
-          <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
-          <div class="stage">
-            <span class="node"></span><h3>Problem</h3>
-            <ul>
-              <li>Growth hormone deficiency means a daily injection through childhood. Miss enough of them and you lose centimetres you never get back.</li>
-              <li>Fear of needles is the real adherence problem, and the legacy platform treated it as a compliance issue rather than a design one.</li>
-              <li>The ecosystem had grown into three disconnected pieces: a patient app, a clinician portal, and two connected injection devices, one Wi-Fi and one Bluetooth.</li>
-            </ul>
-          </div>
-          <div class="stage">
-            <span class="node"></span><h3>Solution</h3>
-            <ul>
-              <li>Ran a heuristic evaluation across the whole ecosystem, then rebuilt it from scratch instead of patching around it.</li>
-              <li>Designed personalised journeys that step a child gradually through needle fear, rather than ignoring it and hoping for adherence.</li>
-              <li>Reconnected app, clinician portal and both devices into one loop, so paediatric endocrinologists see growth and adherence in the same place.</li>
-            </ul>
-          </div>
-          <div class="stage stage-out">
-            <span class="node"></span><h3>Outcome</h3>
-            <div class="out-panel">
-              <p class="out-lead">93.7% median first-year adherence</p>
-              <ul>
-              <li>Adherence tracked across 24 countries in the connected ecosystem this platform sits on.</li>
-              <li>Higher adherence correlated with real growth: change in height standard deviation score and height velocity, both p&lt;0.001.</li>
-              <li>Clinicians can now see a child falling off treatment while there is still time to act.</li>
-              </ul>
-              <span class="cite">Source: easypod connect observational study (ECOS), n=1190, 24 countries, 2010 to 2016. <a href="https://ec.bioscientifica.com/view/journals/ec/7/8/EC-18-0172.xml" target="_blank" rel="noopener">Endocrine Connections 7(8)</a></span>
-            </div>
-          </div>
+          <span class="rail"><span class="rail-fill"></span></span>
+          <div class="stage"><span class="node"></span><h3>Problem</h3><ul><li>Growth hormone deficiency means a daily injection through childhood. Miss enough of them and you lose centimetres you never get back.</li><li>Fear of needles is the real adherence problem, and the legacy platform treated it as a compliance issue rather than a design one.</li><li>The ecosystem had grown into three disconnected pieces: a patient app, a clinician portal, and two connected injection devices, one Wi-Fi and one Bluetooth.</li></ul></div>
+          <div class="stage"><span class="node"></span><h3>Solution</h3><ul><li>Ran a heuristic evaluation across the whole ecosystem, then rebuilt it from scratch instead of patching around it.</li><li>Designed personalised journeys that step a child gradually through needle fear, rather than ignoring it and hoping for adherence.</li><li>Reconnected app, clinician portal and both devices into one loop, so paediatric endocrinologists see growth and adherence in the same place.</li></ul></div>
+          <div class="stage stage-out"><span class="node"></span><h3>Outcome</h3><div class="out-panel"><p class="out-lead">93.7% median first-year adherence</p><ul><li>Adherence tracked across 24 countries in the connected ecosystem this platform sits on.</li><li>Higher adherence correlated with real growth: change in height standard deviation score and height velocity, both p&lt;0.001.</li><li>Clinicians can now see a child falling off treatment while there is still time to act.</li></ul><span class="cite">Source: easypod connect observational study (ECOS), n=1190, 24 countries, 2010 to 2016. <a href="https://ec.bioscientifica.com/view/journals/ec/7/8/EC-18-0172.xml" target="_blank" rel="noopener">Endocrine Connections 7(8)</a></span></div></div>
         </div>
       </div>
-      </div></div>
     </div>
   </article>
 
@@ -566,50 +413,15 @@ footer{padding:0 var(--pad) 28px}
       <span class="plus"></span>
     </button></h2>
     <div class="panel" id="c4" role="region" aria-labelledby="c4-btn">
-      <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
-        <div class="pin-label mono"><b>04</b> Drool</div>
-        <div class="media-wrap">
-        <div class="media">
-          <div class="strip">
-            <figure class="slide"><img src="images/04-problem.jpg" alt="Problem" loading="lazy"><figcaption class="mono">Problem</figcaption></figure>
-            <figure class="slide"><img src="images/04-solution.jpg" alt="Solution" loading="lazy"><figcaption class="mono">Solution</figcaption></figure>
-            <figure class="slide"><img src="images/04-outcome.jpg" alt="Outcome" loading="lazy"><figcaption class="mono">Outcome</figcaption></figure>
-          </div>
-        </div>
-          <div class="media-bar mono"><span class="frame-label">Problem</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
-        </div>
+        <div class="marquee" style="--dur:45s"><div class="marquee-track"><figure class="tile"><img src="images/drool-01.png" alt="Drool 1" loading="lazy"><figcaption class="mono">01</figcaption></figure><figure class="tile"><img src="images/drool-02.png" alt="Drool 2" loading="lazy"><figcaption class="mono">02</figcaption></figure><figure class="tile"><img src="images/drool-03.png" alt="Drool 3" loading="lazy"><figcaption class="mono">03</figcaption></figure><figure class="tile"><img src="images/drool-04.png" alt="Drool 4" loading="lazy"><figcaption class="mono">04</figcaption></figure><figure class="tile"><img src="images/drool-05.png" alt="Drool 5" loading="lazy"><figcaption class="mono">05</figcaption></figure><figure class="tile"><img src="images/drool-01.png" alt="Drool 1" loading="lazy"><figcaption class="mono">01</figcaption></figure><figure class="tile"><img src="images/drool-02.png" alt="Drool 2" loading="lazy"><figcaption class="mono">02</figcaption></figure><figure class="tile"><img src="images/drool-03.png" alt="Drool 3" loading="lazy"><figcaption class="mono">03</figcaption></figure><figure class="tile"><img src="images/drool-04.png" alt="Drool 4" loading="lazy"><figcaption class="mono">04</figcaption></figure><figure class="tile"><img src="images/drool-05.png" alt="Drool 5" loading="lazy"><figcaption class="mono">05</figcaption></figure></div></div>
         <div class="pathway">
-          <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
-          <div class="stage">
-            <span class="node"></span><h3>Problem</h3>
-            <ul>
-              <li>Independent, family-run food businesses in the Nordics have no marketing budget and no route to a new audience.</li>
-              <li>Most food content online is paid placement dressed up as a recommendation.</li>
-              <li>People can tell, and once they can tell they stop trusting any of it.</li>
-            </ul>
-          </div>
-          <div class="stage">
-            <span class="node"></span><h3>Solution</h3>
-            <ul>
-              <li>Built a review brand on one rule: only places worth going back to, and nothing paid.</li>
-              <li>Shot, edited and published everything myself, focused on the family behind the counter rather than the plate.</li>
-              <li>Kept the format short and repeatable so the audience knew exactly what they were getting.</li>
-            </ul>
-          </div>
-          <div class="stage stage-out">
-            <span class="node"></span><h3>Outcome</h3>
-            <div class="out-panel">
-              <p class="out-lead">5M+ views. 30k followers. 300k likes.</p>
-              <ul>
-              <li>Videos regularly past a million views, from a standing start with no budget.</li>
-              <li>A community that turned up for small businesses instead of for the algorithm.</li>
-              </ul>
-            </div>
-          </div>
+          <span class="rail"><span class="rail-fill"></span></span>
+          <div class="stage"><span class="node"></span><h3>Problem</h3><ul><li>Independent, family-run food businesses in the Nordics have no marketing budget and no route to a new audience.</li><li>Most food content online is paid placement dressed up as a recommendation.</li><li>People can tell, and once they can tell they stop trusting any of it.</li></ul></div>
+          <div class="stage"><span class="node"></span><h3>Solution</h3><ul><li>Built a review brand on one rule: only places worth going back to, and nothing paid.</li><li>Shot, edited and published everything myself, focused on the family behind the counter rather than the plate.</li><li>Kept the format short and repeatable so the audience knew exactly what they were getting.</li></ul></div>
+          <div class="stage stage-out"><span class="node"></span><h3>Outcome</h3><div class="out-panel"><p class="out-lead">5M+ views. 30k followers. 300k likes.</p><ul><li>Videos regularly past a million views, from a standing start with no budget.</li><li>A community that turned up for small businesses instead of for the algorithm.</li></ul></div></div>
         </div>
       </div>
-      </div></div>
     </div>
   </article>
 
@@ -625,50 +437,15 @@ footer{padding:0 var(--pad) 28px}
       <span class="plus"></span>
     </button></h2>
     <div class="panel" id="c5" role="region" aria-labelledby="c5-btn">
-      <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
-        <div class="pin-label mono"><b>05</b> Opal</div>
-        <div class="media-wrap">
-        <div class="media">
-          <div class="strip">
-            <figure class="slide"><img src="images/05-problem.jpg" alt="Problem" loading="lazy"><figcaption class="mono">Problem</figcaption></figure>
-            <figure class="slide"><img src="images/05-solution.jpg" alt="Solution" loading="lazy"><figcaption class="mono">Solution</figcaption></figure>
-            <figure class="slide"><img src="images/05-outcome.jpg" alt="Outcome" loading="lazy"><figcaption class="mono">Outcome</figcaption></figure>
-          </div>
-        </div>
-          <div class="media-bar mono"><span class="frame-label">Problem</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
-        </div>
+        <div class="marquee" style="--dur:45s"><div class="marquee-track"><figure class="tile"><img src="images/opal-01.png" alt="Opal 1" loading="lazy"><figcaption class="mono">01</figcaption></figure><figure class="tile"><img src="images/opal-02.png" alt="Opal 2" loading="lazy"><figcaption class="mono">02</figcaption></figure><figure class="tile"><img src="images/opal-03.png" alt="Opal 3" loading="lazy"><figcaption class="mono">03</figcaption></figure><figure class="tile"><img src="images/opal-04.png" alt="Opal 4" loading="lazy"><figcaption class="mono">04</figcaption></figure><figure class="tile"><img src="images/opal-05.png" alt="Opal 5" loading="lazy"><figcaption class="mono">05</figcaption></figure><figure class="tile"><img src="images/opal-01.png" alt="Opal 1" loading="lazy"><figcaption class="mono">01</figcaption></figure><figure class="tile"><img src="images/opal-02.png" alt="Opal 2" loading="lazy"><figcaption class="mono">02</figcaption></figure><figure class="tile"><img src="images/opal-03.png" alt="Opal 3" loading="lazy"><figcaption class="mono">03</figcaption></figure><figure class="tile"><img src="images/opal-04.png" alt="Opal 4" loading="lazy"><figcaption class="mono">04</figcaption></figure><figure class="tile"><img src="images/opal-05.png" alt="Opal 5" loading="lazy"><figcaption class="mono">05</figcaption></figure></div></div>
         <div class="pathway">
-          <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
-          <div class="stage">
-            <span class="node"></span><h3>Problem</h3>
-            <ul>
-              <li>Independent cafes have healthy margins per drink but unpredictable volume.</li>
-              <li>Quiet weeks and slow summers turn a good business into a stressful one.</li>
-              <li>Nobody was solving revenue stability for them. The only tool on offer was discounting, which makes it worse.</li>
-            </ul>
-          </div>
-          <div class="stage">
-            <span class="node"></span><h3>Solution</h3>
-            <ul>
-              <li>Roughly $50 a month for one beverage a day at any partner cafe.</li>
-              <li>Passed around 80% of subscription revenue straight back to the cafes as recurring monthly income.</li>
-              <li>Onboarded independently owned cafes only, and built the brand around exactly that.</li>
-            </ul>
-          </div>
-          <div class="stage stage-out">
-            <span class="node"></span><h3>Outcome</h3>
-            <div class="out-panel">
-              <p class="out-lead">12 cafes. 100+ paying subscribers.</p>
-              <ul>
-              <li>Turned unpredictable footfall into monthly recurring revenue for owners.</li>
-              <li>Customer acquisition close to zero. Growth came through the cafes themselves.</li>
-              </ul>
-            </div>
-          </div>
+          <span class="rail"><span class="rail-fill"></span></span>
+          <div class="stage"><span class="node"></span><h3>Problem</h3><ul><li>Independent cafes have healthy margins per drink but unpredictable volume.</li><li>Quiet weeks and slow summers turn a good business into a stressful one.</li><li>Nobody was solving revenue stability for them. The only tool on offer was discounting, which makes it worse.</li></ul></div>
+          <div class="stage"><span class="node"></span><h3>Solution</h3><ul><li>Roughly $50 a month for one beverage a day at any partner cafe.</li><li>Passed around 80% of subscription revenue straight back to the cafes as recurring monthly income.</li><li>Onboarded independently owned cafes only, and built the brand around exactly that.</li></ul></div>
+          <div class="stage stage-out"><span class="node"></span><h3>Outcome</h3><div class="out-panel"><p class="out-lead">12 cafes. 100+ paying subscribers.</p><ul><li>Turned unpredictable footfall into monthly recurring revenue for owners.</li><li>Customer acquisition close to zero. Growth came through the cafes themselves.</li></ul></div></div>
         </div>
       </div>
-      </div></div>
     </div>
   </article>
 
@@ -684,51 +461,15 @@ footer{padding:0 var(--pad) 28px}
       <span class="plus"></span>
     </button></h2>
     <div class="panel" id="c6" role="region" aria-labelledby="c6-btn">
-      <div class="pin-track"><div class="pin-inner">
       <div class="case-body">
-        <div class="pin-label mono"><b>06</b> Classified</div>
-        <div class="media-wrap">
-        <div class="media">
-          <div class="strip">
-            <figure class="slide is-empty"><figcaption class="mono">Restricted</figcaption></figure>
-            <figure class="slide is-empty"><figcaption class="mono">Restricted</figcaption></figure>
-            <figure class="slide is-empty"><figcaption class="mono">Restricted</figcaption></figure>
-          </div>
-        </div>
-          <div class="media-bar mono"><span class="frame-label">Problem</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
-        </div>
+        <div class="marquee" style="--dur:54s"><div class="marquee-track"><figure class="tile is-empty"><figcaption class="mono">Restricted</figcaption></figure><figure class="tile is-empty"><figcaption class="mono">Restricted</figcaption></figure><figure class="tile is-empty"><figcaption class="mono">Restricted</figcaption></figure><figure class="tile is-empty"><figcaption class="mono">Restricted</figcaption></figure><figure class="tile is-empty"><figcaption class="mono">Restricted</figcaption></figure><figure class="tile is-empty"><figcaption class="mono">Restricted</figcaption></figure><figure class="tile is-empty"><figcaption class="mono">Restricted</figcaption></figure><figure class="tile is-empty"><figcaption class="mono">Restricted</figcaption></figure><figure class="tile is-empty"><figcaption class="mono">Restricted</figcaption></figure><figure class="tile is-empty"><figcaption class="mono">Restricted</figcaption></figure><figure class="tile is-empty"><figcaption class="mono">Restricted</figcaption></figure><figure class="tile is-empty"><figcaption class="mono">Restricted</figcaption></figure></div></div>
         <div class="pathway">
-          <span class="rail"><span class="rail-fill"></span><i class="rn"></i><i class="rn"></i><i class="rn"></i></span>
-          <div class="stage">
-            <span class="node"></span><h3>Problem</h3>
-            <ul>
-              <li class="redact"><span class="bar" style="width:92%"></span></li>
-              <li class="redact"><span class="bar" style="width:74%"></span></li>
-              <li class="redact"><span class="bar" style="width:86%"></span></li>
-            </ul>
-          </div>
-          <div class="stage">
-            <span class="node"></span><h3>Solution</h3>
-            <ul>
-              <li class="redact"><span class="bar" style="width:81%"></span></li>
-              <li class="redact"><span class="bar" style="width:95%"></span></li>
-              <li class="redact"><span class="bar" style="width:68%"></span></li>
-            </ul>
-          </div>
-          <div class="stage stage-out">
-            <span class="node"></span><h3>Outcome</h3>
-            <div class="out-panel">
-              <p class="out-lead">Not yet. Ask me in a room without a recording device.</p>
-              <ul>
-                <li class="redact"><span class="bar" style="width:88%"></span></li>
-                <li class="redact"><span class="bar" style="width:63%"></span></li>
-              </ul>
-              <span class="cite">Under NDA until launch.</span>
-            </div>
-          </div>
+          <span class="rail"><span class="rail-fill"></span></span>
+          <div class="stage"><span class="node"></span><h3>Problem</h3><ul><li><span class="bar" style="width:92%"></span></li><li><span class="bar" style="width:74%"></span></li><li><span class="bar" style="width:86%"></span></li></ul></div>
+          <div class="stage"><span class="node"></span><h3>Solution</h3><ul><li><span class="bar" style="width:81%"></span></li><li><span class="bar" style="width:95%"></span></li><li><span class="bar" style="width:68%"></span></li></ul></div>
+          <div class="stage stage-out"><span class="node"></span><h3>Outcome</h3><div class="out-panel"><p class="out-lead">Not yet. Ask me in a room without a recording device.</p><ul><li><span class="bar" style="width:88%"></span></li><li><span class="bar" style="width:63%"></span></li></ul><span class="cite">Under NDA until launch.</span></div></div>
         </div>
       </div>
-      </div></div>
     </div>
   </article>
 </section>
@@ -785,7 +526,7 @@ footer{padding:0 var(--pad) 28px}
   <div class="wordmark" data-reveal>NICK</div>
   <div class="foot-row mono">
     <span>Toronto, Ontario</span>
-    <span>V1.8</span>
+    <span>V2.3</span>
     <span>&copy; 2026</span>
   </div>
 </footer>
@@ -838,23 +579,19 @@ var reduce = mq('(prefers-reduced-motion: reduce)').matches;
   ov.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ toggle(false); }); });
 })();
 
-/* each image tries its own extension, then the other common ones, before giving up */
-document.querySelectorAll('.slide img').forEach(function(img){
-  var src = img.getAttribute('src');                    // e.g. images/03-solution.jpg
+/* each tile image tries its own extension, then the others, before the placeholder */
+document.querySelectorAll('.tile img').forEach(function(img){
+  var src = img.getAttribute('src');
   var dot = src.lastIndexOf('.');
   var base = dot > -1 ? src.slice(0, dot) : src;
   var given = dot > -1 ? src.slice(dot + 1).toLowerCase() : '';
   var exts = [given, 'jpg', 'jpeg', 'png', 'webp'].filter(function(e, i, a){ return e && a.indexOf(e) === i; });
   var i = 0;
-  function fail(){ img.style.display = 'none'; img.parentNode.classList.add('is-empty');
+  function fail(){ img.parentNode.classList.add('is-empty');
     var cap = img.parentNode.querySelector('figcaption');
-    if (cap.textContent.indexOf(' image') === -1) cap.textContent = cap.textContent + ' image'; }
-  function tryNext(){
-    if (i >= exts.length){ fail(); return; }
-    img.src = base + '.' + exts[i++];
-  }
+    if (cap && cap.textContent.indexOf(' image') === -1) cap.textContent = cap.textContent + ' image'; }
+  function tryNext(){ if (i >= exts.length){ fail(); return; } img.src = base + '.' + exts[i++]; }
   img.addEventListener('error', tryNext);
-  // if the first source already failed to load, move on
   if (img.complete && img.naturalWidth === 0) tryNext();
 });
 
@@ -883,13 +620,7 @@ var Cases = (function(){
     }
     nudge();
   }
-  function nudge(){
-    var t0 = performance.now();
-    (function loop(now){
-      onChange.forEach(function(fn){ fn(); });
-      if (now - t0 < 900) requestAnimationFrame(loop);
-    })(t0);
-  }
+  function nudge(){ /* no pinned media to keep in sync anymore */ }
   heads.forEach(function(h, i){
     h.addEventListener('click', function(){
       setOpen(h, h.getAttribute('aria-expanded') !== 'true', true);
@@ -932,206 +663,6 @@ var Cases = (function(){
     });
   }, {rootMargin:'0px 0px -12% 0px', threshold:0.12});
   items.forEach(function(el){ io.observe(el); });
-})();
-
-/* case pinning: the card is translated down as you scroll, so it holds still on
-   screen while the carousel turns and the rail advances, then it releases.
-   On small screens the card stacks to one stage at a time so it still fits. */
-(function(){
-  var bodies = Array.prototype.slice.call(document.querySelectorAll('.case-body'));
-  var narrow = mq('(max-width:900px)');
-  var still = mq('(prefers-reduced-motion: reduce)');
-  var queued = false, framesDirty = true;
-
-  /* image 2 lands at 42% of the pinned scroll, image 3 at 90% */
-  var K = [0, 0.42, 0.90, 1];
-  var FLAT = [0, 0.5, 1];
-  var FRAMES = ['Problem', 'Solution', 'Outcome'];
-  function smooth(t){ return t * t * (3 - 2 * t); }
-  function slidePos(p){
-    if (p < 0.10) return 0;
-    if (p < K[1]) return smooth((p - 0.10) / (K[1] - 0.10));
-    if (p < 0.58) return 1;
-    if (p < K[2]) return 1 + smooth((p - 0.58) / (K[2] - 0.58));
-    return 2;
-  }
-  /* the rail moves continuously, hitting each node exactly as its image lands */
-  function railAt(p, xs){
-    var vs = [xs[0], xs[1], xs[2], 1];
-    for (var i = 1; i < K.length; i++){
-      if (p <= K[i]) return vs[i-1] + (vs[i] - vs[i-1]) * ((p - K[i-1]) / (K[i] - K[i-1]));
-    }
-    return 1;
-  }
-
-  function metrics(b, vh, mobile, wantPin){
-    var m = b._m;
-    if (m && m.w === b.offsetWidth && m.mobile === mobile && m.want === wantPin
-        && Math.abs(m.vh - vh) < 130) return m;
-
-    var inner = b.parentNode, track = inner.parentNode;
-    inner.style.transform = '';
-    track.style.paddingBottom = '';
-    b.classList.toggle('stacked', mobile && wantPin);
-    b.classList.remove('tight');
-
-    var path = b.querySelector('.pathway'), w = (path && path.offsetWidth) || 1;
-    var stages = Array.prototype.slice.call(b.querySelectorAll('.stage'));
-    var wrap = b.querySelector('.media-wrap');
-    if (wrap) wrap.style.maxWidth = '';
-    var contentH = inner.offsetHeight;
-
-    /* the card has to fit on screen to be worth pinning. If it does not, shrink the
-       image strip until it does rather than giving up on the pin. */
-    var room = vh - 20, frame = b.querySelector('.media');
-
-    /* Fit the card to the window in stages, tallest-first:
-       1. narrow the frame, keeping 16:9 intact
-       2. if the frame hits its floor, tighten the card spacing and narrow again
-       Repeat until it fits or there is nothing left to give. */
-    function shrink(){
-      for (var pass = 0; pass < 4; pass++){
-        var over = contentH - room;
-        if (over <= 0) return true;
-        if (!wrap || !frame) return false;
-        var target = frame.offsetHeight - over - 6;
-        if (target < 150) target = 150;
-        if (Math.round(target) >= Math.round(frame.offsetHeight)) return false;
-        wrap.style.maxWidth = Math.round(target * 16 / 9) + 'px';
-        contentH = inner.offsetHeight;
-      }
-      return contentH <= room;
-    }
-    var fits = shrink();
-    if (!fits){
-      b.classList.add('tight');
-      contentH = inner.offsetHeight;
-      fits = shrink();
-    }
-
-    var pin = wantPin && fits;
-    if (!pin){
-      b.classList.remove('stacked');
-      b.classList.remove('tight');
-      if (wrap) wrap.style.maxWidth = '';
-      contentH = inner.offsetHeight;
-      track.style.paddingBottom = 'clamp(34px,5vh,58px)';
-    }
-
-    m = {
-      w: b.offsetWidth, vh: vh, mobile: mobile, want: wantPin,
-      pin: pin, stacked: pin && mobile, contentH: contentH,
-      tight: b.classList.contains('tight'),
-      inner: inner, track: track, stages: stages,
-      xs: stages.map(function(st){ return (st.offsetLeft + 4.5) / w; }),
-      fill: b.querySelector('.rail-fill'),
-      strip: b.querySelector('.strip'),
-      dots: Array.prototype.slice.call(b.querySelectorAll('.dots i')),
-      label: b.querySelector('.frame-label'),
-      frameW: frame ? frame.offsetWidth : 0,
-      rn: Array.prototype.slice.call(b.querySelectorAll('.rn'))
-    };
-    /* hold the card in the middle of the screen */
-    m.top = Math.max(16, Math.round((vh - contentH) / 2));
-    b._m = m;
-    framesDirty = true;
-    return m;
-  }
-  function invalidate(){ bodies.forEach(function(b){ b._m = null; }); framesDirty = true; }
-
-  /* Every case gets the same frame size, set by whichever card needs the most room.
-     A portfolio where one image is smaller than the rest looks like a mistake. */
-  function syncFrames(vh, mobile, wantPin){
-    framesDirty = false;
-    var minW = Infinity, anyTight = false, list = [];
-    bodies.forEach(function(b){
-      if (!b.offsetParent || b.offsetHeight < 20) return;
-      var m = metrics(b, vh, mobile, wantPin);
-      if (!m.pin) return;
-      list.push(b);
-      if (m.frameW) minW = Math.min(minW, m.frameW);
-      if (m.tight) anyTight = true;
-    });
-    if (!list.length || minW === Infinity) return;
-    list.forEach(function(b){
-      var m = b._m;
-      if (anyTight) b.classList.add('tight');
-      var wrap = b.querySelector('.media-wrap');
-      if (wrap) wrap.style.maxWidth = Math.round(minW) + 'px';
-      m.contentH = m.inner.offsetHeight;
-      m.top = Math.max(16, Math.round((vh - m.contentH) / 2));
-      m.frameW = minW;
-      m.tight = b.classList.contains('tight');
-    });
-  }
-
-  function draw(){
-    queued = false;
-    var vh = window.innerHeight, mobile = narrow.matches, wantPin = !still.matches;
-    if (framesDirty) syncFrames(vh, mobile, wantPin);
-    bodies.forEach(function(b){
-      if (!b.offsetParent || b.offsetHeight < 20) return;
-      var m = metrics(b, vh, mobile, wantPin);
-      var tr = m.track.getBoundingClientRect();
-      if (tr.bottom < -120 || tr.top > vh + 120) return;
-      var prog;
-
-      if (m.pin){
-        var travel = Math.max(0, tr.height - m.contentH);
-        var y = Math.min(Math.max(m.top - tr.top, 0), travel);
-        m.inner.style.transform = y ? 'translate3d(0,' + y + 'px,0)' : '';
-        prog = travel > 8 ? y / travel : 0;
-        m.inner.classList.toggle('pinning', prog > 0.005 && prog < 0.995);
-      } else {
-        m.inner.style.transform = '';
-        m.inner.classList.remove('pinning');
-        prog = (vh * 0.82 - tr.top) / (tr.height + vh * 0.3);
-      }
-      prog = Math.max(0, Math.min(1, prog));
-      var pos = slidePos(prog), active = Math.round(pos);
-
-      if (m.fill) m.fill.style.transform = (mobile && !m.stacked)
-        ? 'scaleY(' + prog + ')'
-        : 'scaleX(' + railAt(prog, m.stacked ? FLAT : m.xs) + ')';
-
-      m.stages.forEach(function(st, i){
-        st.classList.toggle('lit', prog >= K[i]);
-        st.classList.toggle('active', m.stacked && i === active);
-      });
-      m.rn.forEach(function(n, i){ n.classList.toggle('lit', prog >= K[i]); });
-
-      if (m.strip){
-        m.strip.style.transform = 'translateX(' + (-pos * 33.3333) + '%)';
-        m.dots.forEach(function(d, i){ d.classList.toggle('on', i === active); });
-        if (m.label && m.label.textContent !== FRAMES[active]) m.label.textContent = FRAMES[active];
-      }
-    });
-  }
-  function onScroll(){ if (!queued){ queued = true; requestAnimationFrame(draw); } }
-  window.addEventListener('scroll', onScroll, {passive:true});
-
-  /* ignore the small height changes a mobile address bar causes, or the card jumps */
-  var lastW = window.innerWidth, lastH = window.innerHeight;
-  window.addEventListener('resize', function(){
-    var w = window.innerWidth, h = window.innerHeight;
-    if (w !== lastW || Math.abs(h - lastH) > 130){ lastW = w; lastH = h; invalidate(); }
-    onScroll();
-  });
-  window.addEventListener('load', function(){ invalidate(); draw(); });
-  Cases.subscribe(function(){ invalidate(); draw(); });
-  window.__pinDraw = draw;
-  /* type __pinReport() in the browser console to see what each case decided */
-  window.__pinReport = function(){
-    bodies.forEach(function(b, i){
-      var m = b._m;
-      console.log('case ' + (i + 1) + '  pin:' + (m ? m.pin : 'not measured')
-        + '  card:' + (m ? m.contentH : '?') + 'px  window:' + window.innerHeight + 'px'
-        + '  frame:' + (m ? Math.round(m.frameW) : '?') + 'px'
-        + '  tightened:' + (m ? m.tight : '?')
-        + '  stacked:' + (m ? m.stacked : '?'));
-    });
-  };
-  draw();
 })();
 
 /* stat count up */
